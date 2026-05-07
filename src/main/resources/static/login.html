@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - InterviewIQ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+
+  <div class="split-container">
+
+    <!-- LEFT: Illustration -->
+    <div class="split-left">
+      <div class="brand-block">
+        <div class="brand-logo">InterviewIQ AI</div>
+        <div class="brand-tagline">AI Mock Interview Platform</div>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3940/3940056.png" alt="Login Illustration" />
+    </div>
+
+    <!-- RIGHT: Login Form -->
+    <div class="split-right">
+      <div class="auth-card">
+        <h2>Welcome Back!</h2>
+        <p class="muted">Login to continue your interview journey</p>
+
+        <form id="loginForm">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required />
+
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+
+          <div class="forgot"><a href="#">Forgot Password?</a></div>
+
+          <button type="submit" class="btn btn-primary btn-full">Login</button>
+
+          <div class="divider"><span>OR</span></div>
+
+
+          <p class="bottom-text">
+            Don't have an account? <a href="signup.html">Sign up</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Listen for login form submit
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault(); // stop page reload
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("http://localhost:8080/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem("user", JSON.stringify(data));
+          alert("Login successful!");
+          window.location.href = "dashboard.html";
+        } else {
+          alert("Invalid email or password");
+        }
+      } catch (err) {
+        alert("Server error: " + err.message);
+      }
+    });
+  </script>
+
+</body>
+</html>

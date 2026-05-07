@@ -26,7 +26,7 @@ public class AuthSerivce {
         user.setEmail(email);
         user.setPassword(password);
         userRepository.save(user);
-        return "User registered succesfully";
+        return "User registered successfully";
     }
 
     public boolean login(String email, String password){

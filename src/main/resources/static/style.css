@@ -1,0 +1,746 @@
+/* ==========================================================================
+   InterviewIQ AI
+   File: style-teaching.css
+   --------------------------------------------------------------------------
+       • landing.html
+       • login.html
+       • signup.html
+   --------------------------------------------------------------------------
+   How this file is organized (top → bottom):
+       SECTION 1  → Global Reset           (all 3 pages)
+       SECTION 2  → Navbar                 (landing only)
+       SECTION 3  → Buttons (reusable)     (all 3 pages)
+       SECTION 4  → Landing page wrapper   (landing only)
+       SECTION 5  → Hero section           (landing only)
+       SECTION 6  → Stats row              (landing only)
+       SECTION 7  → Split layout (base)    (login + signup)
+       SECTION 8  → Auth Card (base)       (login + signup)
+       SECTION 9  → Form inputs (base)     (login + signup)
+       SECTION 10 → Divider                (login + signup)
+       SECTION 11 → Bottom text            (login + signup)
+       SECTION 12 → .auth-page overrides   (login + signup) — refines the base
+       SECTION 13 → .signup-page overrides (signup only)
+   --------------------------------------------------------------------------
+   NOTE for students:
+   The base rules (sections 7–11) define the GENERIC look of the split layout
+   and form. The `.auth-page ...` rules (section 12) are more specific
+   overrides that fine-tune things only when the <body> has class="auth-page".
+   This is a common pattern: write generic styles first, then page-specific
+   refinements on top.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   SECTION 1 — GLOBAL RESET
+   --------------------------------------------------------------------------
+   Used by : ALL pages
+   Purpose : Browsers add their own default margins, padding and fonts.
+             We wipe them so OUR layout is predictable everywhere.
+   ========================================================================== */
+* {
+  margin: 0;                              /* remove default margins on every element */
+  padding: 0;                             /* remove default padding on every element */
+  box-sizing: border-box;                 /* width includes padding + border (easier math) */
+  font-family: 'Poppins', sans-serif;     /* one font across the whole app */
+}
+
+body {
+  background: linear-gradient(180deg, #F5F7FB 0%, #ECEEFB 100%);  /* soft top-to-bottom bg */
+  color: #222;                            /* default text color */
+  line-height: 1.6;                       /* comfortable reading spacing */
+  min-height: 100vh;                      /* body always fills the viewport */
+}
+
+a {
+  text-decoration: none;                  /* remove the default underline on links */
+  color: inherit;                         /* links use the parent's text color */
+}
+
+
+/* ==========================================================================
+   SECTION 2 — NAVBAR
+   --------------------------------------------------------------------------
+   Used by : landing.html
+   HTML    : <nav class="navbar">
+                <div class="logo">Interview<span>IQ</span></div>
+                <ul class="nav-links"> ... </ul>
+             </nav>
+   Purpose : Sticky frosted-glass top bar with logo on the left and links
+             on the right.
+   ========================================================================== */
+.navbar {
+  display: flex;                                      /* logo + links on one row */
+  justify-content: space-between;                     /* push them to opposite ends */
+  align-items: center;                                /* vertically center them */
+  padding: 16px 60px;                                 /* breathing room */
+  background: rgba(255, 255, 255, 0.75);              /* semi-transparent white */
+  backdrop-filter: blur(14px);                        /* frosted glass effect */
+  border-bottom: 1px solid rgba(108, 99, 255, 0.08);  /* subtle purple separator */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);         /* soft drop shadow */
+  position: sticky;                                   /* stays at top while scrolling */
+  top: 0;
+  z-index: 100;                                       /* sit above hero glow etc. */
+}
+
+/* Brand / logo on the left */
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6C63FF;                         /* brand purple */
+  letter-spacing: -0.3px;
+}
+.logo span {
+  color: #333;                            /* second word ("IQ") in dark gray */
+}
+
+/* Right-side nav list */
+.nav-links {
+  display: flex;
+  list-style: none;                       /* remove the bullet dots */
+  gap: 36px;                              /* space between items */
+  align-items: center;
+}
+.nav-links a {
+  font-size: 15px;
+  font-weight: 500;
+  color: #555;
+  transition: 0.2s;                       /* smooth hover color change */
+}
+.nav-links a:hover {
+  color: #6C63FF;                         /* turn purple on hover */
+}
+/* If a nav link uses .btn-primary, force its text white (overrides inherit) */
+.nav-links .btn-primary {
+  color: white;
+}
+
+
+/* ==========================================================================
+   SECTION 3 — BUTTONS (REUSABLE)
+   --------------------------------------------------------------------------
+   Used by : ALL pages
+   Pattern : One base ".btn" class + variant classes for color/size.
+             Combine them in HTML, e.g.:
+                 <button class="btn btn-primary btn-full">Login</button>
+   ========================================================================== */
+
+/* Base — shared shape used by every button */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.25s ease;             /* smooth hover animation */
+  text-align: center;
+}
+
+/* Solid purple gradient button (e.g. "Sign Up", "Login") */
+.btn-primary {
+  background: linear-gradient(135deg, #6C63FF, #8B85FF);
+  color: white;
+  box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5a54e0, #7a73f0);  /* slightly darker */
+  transform: translateY(-2px);                            /* lift effect */
+  box-shadow: 0 12px 26px rgba(108, 99, 255, 0.45);
+}
+
+/* Outlined button (e.g. "Login" link in navbar) */
+.btn-outline {
+  background: transparent;
+  border: 1px solid #6C63FF;
+  color: #6C63FF;
+}
+.btn-outline:hover {
+  background: rgba(108, 99, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Hero call-to-action button ("Get Started") */
+.btn-cta {
+  background: linear-gradient(90deg, #6C63FF, #7A70FF);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.25);
+}
+.btn-cta:hover {
+  background: linear-gradient(90deg, #5A54E8, #6C63FF);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(108, 99, 255, 0.35);
+  color: white;
+}
+
+/* Size variant — smaller button used inside the navbar */
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 14px;
+}
+
+/* Width variant — full width button used inside auth forms */
+.btn-full {
+  width: 100%;
+  margin-top: 10px;
+}
+
+
+/* ==========================================================================
+   SECTION 4 — LANDING PAGE WRAPPER
+   --------------------------------------------------------------------------
+   Used by : landing.html
+   HTML    : <body class="landing-page">
+   Purpose : Force the landing page to fit in ONE screen (no scroll).
+             Uses a column flexbox so navbar sits on top, hero fills the rest.
+   ========================================================================== */
+.landing-page {
+  height: 100vh;                                          /* full viewport height */
+  overflow: hidden;                                       /* no scroll allowed */
+  background: linear-gradient(135deg, #eef1ff, #f7f8ff);  /* soft purple bg */
+  display: flex;
+  flex-direction: column;                                 /* navbar on top, hero below */
+}
+
+
+/* ==========================================================================
+   SECTION 5 — HERO SECTION
+   --------------------------------------------------------------------------
+   Used by : landing.html
+   HTML    : <section class="hero">
+                <div class="hero-inner">
+                    <div class="hero-left"> ...text + buttons... </div>
+                    <div class="hero-right"><img ...></div>
+                </div><div class="stats"> ... </div>      ← optional
+             </section>
+   ========================================================================== */
+.hero {
+  position: relative;                     /* needed so the ::before glow can absolute-position */
+  flex: 1;                                /* fills all space below the navbar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;                /* vertically center hero content */
+  padding: 30px 60px 0;
+  overflow: hidden;                       /* clip the decorative glow */
+}
+
+/* Decorative purple glow sitting behind the right side of the hero */
+.hero::before {
+  content: "";                            /* ::before requires content */
+  position: absolute;
+  inset: 0;                               /* shorthand for top/right/bottom/left: 0 */
+  background: radial-gradient(circle at right, rgba(108, 99, 255, 0.15), transparent 60%);
+  pointer-events: none;                   /* glow is decorative, not clickable */
+}
+
+/* Two-column row inside the hero (text left, image right) */
+.hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;                         /* center horizontally */
+  flex: 1;
+  position: relative;
+  z-index: 1;                             /* sit above the ::before glow */
+}
+
+/* LEFT column — heading, subtitle, buttons */
+.hero-left {
+  flex: 1;
+  max-width: 560px;
+}
+
+/* Small "AI-Powered" pill above the heading */
+.badge {
+  display: inline-block;
+  background: rgba(108, 99, 255, 0.1);
+  color: #6C63FF;
+  padding: 6px 14px;
+  border-radius: 999px;                   /* fully rounded */
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+/* Big hero heading */
+.hero-left h1 {
+  font-size: 48px;
+  line-height: 1.2;
+  margin-bottom: 18px;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+}
+
+/* Purple gradient TEXT effect (inside the heading) */
+.gradient-text {
+  background: linear-gradient(135deg, #6C63FF, #8B85FF);
+  -webkit-background-clip: text;          /* clip the gradient to the text shape */
+  -webkit-text-fill-color: transparent;   /* hide the actual text color so gradient shows */
+}
+
+/* Paragraph below the heading */
+.subtitle {
+  color: #666;
+  font-size: 16px;
+  max-width: 480px;
+  margin-bottom: 28px;
+}
+
+/* Row of buttons under the subtitle */
+.hero-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+/* RIGHT column — illustration */
+.hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.hero-right img {
+  max-width: 100%;
+  height: auto;
+  transition: transform 0.4s ease;        /* smooth hover zoom */
+}
+.hero-right img:hover {
+  transform: translateY(-6px) scale(1.02);/* slight lift + zoom on hover */
+}
+
+
+/* ==========================================================================
+   SECTION 6 — STATS ROW (anchored at bottom of hero)
+   --------------------------------------------------------------------------
+   Used by : landing.html (optional — only if you add a stats row)
+   HTML    : <div class="stats">
+                <div class="stat-box"><h2>10k+</h2><p>Users</p></div>
+                ...
+             </div>
+   ========================================================================== */
+.stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 30px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(108, 99, 255, 0.1);
+}
+
+.stat-box {
+  border-right: 1px solid rgba(108, 99, 255, 0.1);  /* vertical separator */
+  padding-right: 40px;
+}
+.stat-box:last-child {
+  border-right: none;                               /* no separator after last item */
+}
+.stat-box h2 {
+  font-size: 24px;
+  color: #6C63FF;
+  font-weight: 700;
+}
+.stat-box p {
+  font-size: 13px;
+  color: #666;
+}
+
+
+/* ==========================================================================
+   SECTION 7 — SPLIT LAYOUT (BASE)
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <div class="split-container">
+                <div class="split-left"> ...image... </div>
+                <div class="split-right"> ...auth card... </div>
+             </div>
+   Purpose : Two equal columns side-by-side filling the screen.
+   ========================================================================== */
+.split-container {
+  display: flex;
+  height: 100vh;                          /* full screen */
+}
+
+/* LEFT — illustration panel */
+.split-left {
+  flex: 1;                                /* take half the width */
+  background: linear-gradient(135deg, #6C63FF, #8B85FF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.split-left img {
+  max-width: 70%;
+}
+
+/* RIGHT — area that holds the auth form card */
+.split-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+
+/* ==========================================================================
+   SECTION 8 — AUTH CARD (BASE)
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <div class="auth-card"> ...form... </div>
+   Purpose : The white card that holds the login/signup form.
+   ========================================================================== */
+.auth-card {
+  width: 380px;
+  padding: 40px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.auth-card h2 {
+  font-size: 26px;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+/* Small helper line beneath the heading */
+.muted {
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+
+/* ==========================================================================
+   SECTION 9 — FORM INPUTS (BASE)
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <form><label>..</label><input ...></form>
+   ========================================================================== */
+form label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+  font-weight: 500;
+}
+
+form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+form input:focus {
+  border-color: #6C63FF;                  /* purple border when typing */
+}
+
+/* "Forgot password?" link — right-aligned (login page) */
+.forgot {
+  text-align: right;
+  margin-top: 6px;
+  font-size: 13px;
+}
+.forgot a {
+  color: #6C63FF;
+}
+
+
+/* ==========================================================================
+   SECTION 10 — DIVIDER ("or" line between form and Google button)
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <div class="divider"><span>or</span></div>
+   Trick   : Two horizontal lines drawn with ::before and ::after pseudo
+             elements, sitting on each side of the centered word.
+   ========================================================================== */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 25px 0;
+  font-size: 13px;
+  color: #999;
+}
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #eee;
+}
+.divider::before { left: 0; }
+.divider::after  { right: 0; }
+
+
+/* ==========================================================================
+   SECTION 11 — BOTTOM TEXT ("Don't have an account? Sign up")
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <p class="bottom-text">...<a>...</a></p>
+   ========================================================================== */
+.bottom-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+.bottom-text a {
+  color: #6C63FF;
+  font-weight: 500;
+}
+
+
+/* ==========================================================================
+   SECTION 12 — .auth-page OVERRIDES
+   --------------------------------------------------------------------------
+   Used by : login.html, signup.html
+   HTML    : <body class="auth-page">                ← login
+             <body class="auth-page signup-page">    ← signup
+   --------------------------------------------------------------------------
+   IMPORTANT (for students):
+   The rules above (sections 7–11) are GENERIC. The rules below are MORE
+   SPECIFIC because they start with ".auth-page ...". When two rules target
+   the same element, the more specific one wins (CSS specificity).
+   This is how we keep a generic style and still polish auth pages further.
+   ========================================================================== */
+
+/* Page wrapper — auth pages must not scroll */
+.auth-page {
+  height: 100vh;
+  overflow: hidden;
+  background: #f7f8ff;
+}
+
+/* Override split-container height in auth pages */
+.auth-page .split-container {
+  height: 100vh;
+}
+
+/* ----- LEFT panel: branded gradient illustration area ----- */
+.auth-page .split-left {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 40%, #E0E7FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  overflow: hidden;
+}
+.auth-page .split-left img {
+  width: 380px;
+  max-width: 80%;
+  filter: drop-shadow(0 18px 35px rgba(108, 99, 255, 0.18));  /* soft purple shadow */
+}
+
+/* ----- Top-left brand block (logo + tagline) inside left panel ----- */
+.auth-page .brand-block {
+  position: absolute;                     /* pin to corner */
+  top: 40px;
+  left: 80px;
+  z-index: 2;
+}
+.auth-page .brand-logo {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6C63FF;
+}
+.auth-page .brand-tagline {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin-top: 4px;
+}
+
+/* ----- RIGHT panel: form area ----- */
+.auth-page .split-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F9FAFB;
+  padding: 30px;
+}
+
+/* ----- Auth card (compact version for auth pages) ----- */
+.auth-page .auth-card {
+  background: #FFFFFF;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-page .auth-card h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.auth-page .muted {
+  color: #6B7280;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ----- Form fields (auth-page version) ----- */
+.auth-page form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+.auth-page form input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.auth-page form input:focus {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+}
+
+/* ----- Forgot password link in auth pages ----- */
+.auth-page .forgot {
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 22px;
+  font-size: 12px;
+}
+.auth-page .forgot a {
+  color: #6C63FF;
+  font-weight: 500;
+}
+
+/* ----- Login/Sign up button (full-width gradient) ----- */
+.auth-page .btn-primary {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(90deg, #6C63FF, #7A70FF);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(108, 99, 255, 0.25);
+  transition: 0.25s;
+}
+.auth-page .btn-primary:hover {
+  background: linear-gradient(90deg, #5A54E8, #6C63FF);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(108, 99, 255, 0.35);
+}
+
+/* ----- Divider in auth pages (single line behind centered word) ----- */
+.auth-page .divider {
+  text-align: center;
+  margin: 28px 0;
+  position: relative;
+  color: #9CA3AF;
+  font-size: 12px;
+}
+.auth-page .divider span {
+  background: #FFFFFF;                    /* hides the line behind the word */
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+}
+.auth-page .divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #E5E7EB;
+}
+/* Cancel the second line that section 10 added — only one line in auth pages */
+.auth-page .divider::after { content: none; }
+
+/* ----- Google sign-in button ----- */
+.auth-page .btn-google {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  color: #111827;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: 0.2s;
+}
+.auth-page .btn-google:hover {
+  background: #F9FAFB;
+}
+
+/* ----- Bottom text in auth pages ----- */
+.auth-page .bottom-text {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 13px;
+  color: #6B7280;
+}
+.auth-page .bottom-text a {
+  color: #6C63FF;
+  font-weight: 500;
+}
+
+
+/* ==========================================================================
+   SECTION 13 — .signup-page OVERRIDES
+   --------------------------------------------------------------------------
+   Used by : signup.html only
+   HTML    : <body class="auth-page signup-page">
+   Purpose : Tiny tweaks on top of the shared auth styles to differentiate
+             the signup page from the login page.
+   ========================================================================== */
+
+/* Slightly smaller heading on signup card */
+.signup-page .auth-card h2 {
+  font-size: 22px;
+}
+
+/* Center the signup illustration (no left offset like login) */
+.signup-page .split-left img {
+  margin-left: 0;
+}
+
+/* Consistent spacing for "Already have an account?" line */
+.signup-page .bottom-text {
+  margin-top: 22px;
+}
+
+
+/* ==========================================================================
+   END OF FILE
+   --------------------------------------------------------------------------
+   Quick recap of what each page uses:
+       landing.html → sections 1, 2, 3, 4, 5, 6
+       login.html   → sections 1, 3, 7, 8, 9, 10, 11, 12
+       signup.html  → sections 1, 3, 7, 8, 9, 10, 11, 12, 13
+   ========================================================================== */
