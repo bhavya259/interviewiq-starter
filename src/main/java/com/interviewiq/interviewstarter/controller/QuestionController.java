@@ -21,9 +21,9 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping
+    @GetMapping("/{interviewId}")
     public List<Question> getQuestions(@PathVariable Long interviewId){
-//        return questionService.get
+        return questionService.getQuestionsForInterview(interviewId);
     }
 
 }

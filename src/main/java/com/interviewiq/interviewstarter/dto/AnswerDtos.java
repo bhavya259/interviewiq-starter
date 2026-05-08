@@ -20,7 +20,7 @@ public class AnswerDtos {
     public static class AnswerResponse{
         private boolean success;
         private String message;
-        private String answerId;
+        private Long answerId;
     }
 
 }

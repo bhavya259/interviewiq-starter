@@ -17,7 +17,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String interviewId;
+    private Long interviewId;
 
     @Column(length=5000)
     private String questionText;

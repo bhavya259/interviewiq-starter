@@ -7,20 +7,22 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "answers")
+@Table(name = "evaluations")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Answer {
+public class Evaluation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long questionId;
+    private Long answerId;
 
-    @Column(length=5000)
-    private String answerText;
+    private Integer score;
+
+    @Column(length=500)
+    private String feedback;
 
 
 }
