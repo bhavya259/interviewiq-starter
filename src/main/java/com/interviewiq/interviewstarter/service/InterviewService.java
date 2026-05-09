@@ -16,7 +16,7 @@ public class InterviewService {
     public Interview create(String role, String experienceLevel, String difficulty, Integer duration){
         Interview interview = new Interview();
         interview.setRole(role);
-        interview.setExperiencelevel(experienceLevel);
+        interview.setExperienceLevel(experienceLevel);
         interview.setDifficulty(difficulty);
         interview.setDuration(duration);
         return interviewRepository.save(interview);

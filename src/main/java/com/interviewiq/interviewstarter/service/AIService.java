@@ -57,10 +57,17 @@ public class AIService {
 
     /* The base URL of Google's Gemini API. We append "?key=YOUR_API_KEY" to it.
      * Example final URL:
-     *   https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyABC123
+     *   https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyABC123
+     *
+     * NOTE: "gemini-1.5-flash" was retired by Google. Use a current model such as
+     *   - gemini-2.0-flash       (fast, free tier, good default)
+     *   - gemini-2.5-flash       (newer, slightly smarter)
+     *   - gemini-2.5-pro         (most capable, slower / lower quota)
+     * You can list available models any time at:
+     *   https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_API_KEY
      */
     private static final String GEMINI_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
     /* @Value tells Spring: "look up this property in application.yaml and inject it here."
      * The ":" at the end means: if the property is missing, default to "" (empty string).
@@ -73,7 +80,7 @@ public class AIService {
     private final RestTemplate http = new RestTemplate();
 
     /* @PostConstruct = "run this method ONCE, right after Spring builds the object."
-     * We use it just to print whether the key was loaded — helps students debug. */
+     * We use it just to print whether the key was loaded. */
     @jakarta.annotation.PostConstruct
     void logKeyStatus() {
         if (apiKey == null || apiKey.isBlank()) {
@@ -96,6 +103,7 @@ public class AIService {
      * ------------------------------------------------------------------ */
     public static class AIEvaluation {
         public int score;                                       // 0-100
+        public int fillerWords;                                 // count of "um", "uh", etc.
         public String relevance;                                // low | medium | high
         public String technicalAccuracy;                        // poor | average | good
         public List<String> strengths       = new ArrayList<>();
@@ -159,14 +167,14 @@ public class AIService {
         int n = count <= 0 ? 5 : count;
 
         return "You are an expert technical interviewer. " +
-               "Generate exactly " + n + " interview questions for a " + safeExp +
-               "-level " + safeRole + " at " + safeDiff + " difficulty.\n\n" +
-               "Rules:\n" +
-               "- Mix conceptual, practical, and scenario-based questions.\n" +
-               "- Each question must be ONE sentence, clear and specific.\n" +
-               "- No numbering, no preamble, no markdown.\n" +
-               "- Return ONLY a valid JSON array of strings, e.g.:\n" +
-               "[\"Question 1?\", \"Question 2?\", \"Question 3?\"]";
+                "Generate exactly " + n + " interview questions for a " + safeExp +
+                "-level " + safeRole + " at " + safeDiff + " difficulty.\n\n" +
+                "Rules:\n" +
+                "- Mix conceptual, practical, and scenario-based questions.\n" +
+                "- Each question must be ONE sentence, clear and specific.\n" +
+                "- No numbering, no preamble, no markdown.\n" +
+                "- Return ONLY a valid JSON array of strings, e.g.:\n" +
+                "[\"Question 1?\", \"Question 2?\", \"Question 3?\"]";
     }
 
     /* Pull a JSON array of strings out of the AI's reply.
@@ -215,22 +223,24 @@ public class AIService {
      * We strongly tell it to return JSON ONLY — no markdown, no explanations. */
     private String buildPrompt(String question, String answer) {
         return "You are an expert technical interviewer. " +
-               "Evaluate the candidate's answer.\n\n" +
-               "Question: " + question + "\n" +
-               "Answer: "   + answer   + "\n\n" +
-               "Evaluate based on:\n" +
-               "1. Relevance to the question\n" +
-               "2. Technical correctness\n" +
-               "3. Clarity\n\n" +
-               "Return ONLY valid JSON in this exact format (no markdown, no prose):\n" +
-               "{\n" +
-               "  \"score\": 0,\n" +
-               "  \"relevance\": \"low\",\n" +
-               "  \"technicalAccuracy\": \"poor\",\n" +
-               "  \"strengths\": [\"...\"],\n" +
-               "  \"weaknesses\": [\"...\"],\n" +
-               "  \"recommendations\": [\"...\"]\n" +
-               "}";
+                "Evaluate the candidate's answer.\n\n" +
+                "Question: " + question + "\n" +
+                "Answer: "   + answer   + "\n\n" +
+                "Evaluate based on:\n" +
+                "1. Relevance to the question\n" +
+                "2. Technical correctness\n" +
+                "3. Clarity\n" +
+                "4. Count filler words in the answer (um, uh, er, like, you know, basically)\n\n" +
+                "Return ONLY valid JSON in this exact format (no markdown, no prose):\n" +
+                "{\n" +
+                "  \"score\": 0,\n" +
+                "  \"fillerWords\": 0,\n" +
+                "  \"relevance\": \"low\",\n" +
+                "  \"technicalAccuracy\": \"poor\",\n" +
+                "  \"strengths\": [\"...\"],\n" +
+                "  \"weaknesses\": [\"...\"],\n" +
+                "  \"recommendations\": [\"...\"]\n" +
+                "}";
     }
 
     /* ==================================================================
@@ -310,6 +320,7 @@ public class AIService {
 
         AIEvaluation e = new AIEvaluation();
         e.score             = parseInt(clean,    "score",             50);        // fallback 50
+        e.fillerWords       = parseInt(clean,    "fillerWords",       0);
         e.relevance         = parseString(clean, "relevance",         "medium");
         e.technicalAccuracy = parseString(clean, "technicalAccuracy", "average");
         e.strengths         = parseArray(clean,  "strengths");
@@ -356,7 +367,7 @@ public class AIService {
     private List<String> parseArray(String json, String key) {
         List<String> out = new ArrayList<>();
         Matcher block = Pattern.compile("\"" + key + "\"\\s*:\\s*\\[(.*?)\\]", Pattern.DOTALL)
-                               .matcher(json);
+                .matcher(json);
         if (!block.find()) return out;   // key missing -> empty list
 
         Matcher items = Pattern.compile("\"((?:\\\\.|[^\"\\\\])*)\"").matcher(block.group(1));
@@ -365,7 +376,7 @@ public class AIService {
     }
 
     /* ==================================================================
-     *  ESCAPING / UNESCAPING
+     *  ESCAPING / UNESCAPING .
      *
      *  WHY DO WE NEED THIS?
      *  --------------------
@@ -382,7 +393,7 @@ public class AIService {
      *
      *  EXAMPLE — escapeJson (Java string -> JSON-safe string):
      *  -------------------------------------------------------
-     *   (3 chars: " H i ", newline, tab):
+     *  (3 chars: " H i ", newline, tab):
      *      He said "Hi"
      *      <tab>bye
      *

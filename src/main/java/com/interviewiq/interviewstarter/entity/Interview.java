@@ -19,7 +19,7 @@ public class Interview {
     private Long id;
 
     private String role;
-    private String experiencelevel;
+    private String experienceLevel;
     private String difficulty;
     private Integer duration;
 
