@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class Evaluationsdtos {
+public class Evaluationsdtos
+{
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EvaluateAnswersRequest{
-        private List<SubmitAnswerItem> answers;
+        private List<AnswerDtos.SubmitAnswerItem> answers;
     }
 
     @Data
@@ -25,15 +26,5 @@ public class Evaluationsdtos {
         private List<String> strengths;
         private List<String> weaknesses;
         private List<String> recommendations;
-    }
-
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubmitAnswerItem{
-        private Long questionId;
-        private String questionText;
-        private String answerText;
     }
 }

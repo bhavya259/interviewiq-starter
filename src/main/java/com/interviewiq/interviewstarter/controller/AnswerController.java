@@ -6,6 +6,9 @@ import com.interviewiq.interviewstarter.entity.Answer;
 import com.interviewiq.interviewstarter.service.AnswerService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/answers")
@@ -18,9 +21,18 @@ public class AnswerController {
     }
 
     @PostMapping
-    public AnswerResponse getQuestions(@RequestBody AnswerRequest request){
-        Answer answer = answerService.save(request.getQuestionId(),request.getAnswerText());
-        return new AnswerResponse(true, "Answer saved", answer.getId());
+    public SubmitAnswersResponse submitAnswers(@RequestBody SubmitAnswersRequest request){
+        List<Answer> toSave = new ArrayList<>();
+        if (request.getAnswers() != null) {
+            for (SubmitAnswerItem item : request.getAnswers()) {
+                Answer a = new Answer();
+                a.setQuestionId(item.getQuestionId());
+                a.setAnswerText(item.getAnswerText());
+                toSave.add(a);
+            }
+        }
+        List<Answer> saved = answerService.saveAll(toSave);
+        return new SubmitAnswersResponse(true, saved.size());
     }
 
 }
