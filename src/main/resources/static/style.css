@@ -228,7 +228,7 @@ a {
        </div>
      </section>
    --------------------------------------------------------------------------
-   Tricks worth pointing out to students:
+   Tricks worth pointing:
      • .hero::before  → decorative purple radial glow (pointer-events:none
        so clicks pass through).
      • .gradient-text → uses -webkit-background-clip:text + transparent fill
@@ -541,8 +541,7 @@ form input:focus {
      The base rules in sections 7–11 give a generic split-layout look.
      These ".auth-page .xxx" rules are MORE SPECIFIC selectors so they win,
      letting us polish the actual login/signup pages without touching the
-     base styles. This is **CSS specificity** in action — great teaching
-     moment for students.
+     base styles. This is **CSS specificity** in action.
    What they change:
      • .split-left  → light gradient background (instead of solid purple)
                        + drop-shadow on the illustration
