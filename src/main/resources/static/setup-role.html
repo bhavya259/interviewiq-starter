@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><step1 select role</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="setup-panel-page">
+    <div class="main-container">
+    <!-- Top header + stepper + sectiontitle -->
+    <div class="top-section">
+        <div class="panel-header">
+            <h1>Lets setup your interview</h1>
+            <p>Tell us about your preference</p>
+        </div>
+        <div class="step-bar">
+            <div class="step active">
+                <div class="step-circle">1</div>
+                <div class="step-label">Role</div>
+            </div>
+            <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Experience</div>
+                </div>
+            <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Difficulty</div>
+                </div>
+            <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Duration</div>
+                </div>
+        </div>
+
+
+        <div class="section-heading">
+            <h2>Select Role</h2>
+            <p>Choose the role you want to practice</p>
+        </div>
+    </div>
+
+
+    <!-- Middle Role grid -->
+    <div class="role-grid">
+        <div class="role-card" data-value="FrontEnd Developer">
+            <div class ="role-icon">💻</div>
+            <div class="role-label">Frontend Developer</div>
+        </div>
+        <div class="role-card" data-value="Backend Developer">
+            <div class ="role-icon">⚙</div>
+            <div class="role-label">Backend Developer</div>
+        </div>
+        <div class="role-card" data-value="HR Interview">
+            <div class ="role-icon">💻</div>
+            <div class="role-label">HR Interview</div>
+        </div>
+        <div class="role-card" data-value="MERN Stack Developer">
+            <div class ="role-icon">💻</div>
+            <div class="role-label">MERN Stack Developer</div>
+        </div>
+        <div class="role-card" data-value="Devops Engineer">
+            <div class ="role-icon">💻</div>
+            <div class="role-label">Devops Engineer</div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn-back" onclick="window.location.href='dashboard.html'"><- Back</button>
+        <button class="btn-back" onclick="goNext()">Next -></button>
+    </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = "role";
+        const NEXT_PAGE = "experience.html"
+
+        let selected = localStorage.getItem(STORAGE_KEY) || null;
+
+        document.querySelectorAll(".role-card").forEach(card => {
+            if(card.dataset.value == selected) card.classList.add("selected");
+
+            card.addEventListener("click", () =>{
+                document.querySelectorAll(".role-card").forEach(c=> c.classList.remove("selected"));
+                card.classList.add("selected");
+                selected = card.dataset.value;
+                localStorage.setItem(STORAGE_KEY,selected);
+            })
+        })
+
+        function goNext(){
+            if(!selected){
+                alert("Please select a role to continue");
+                return;
+            }
+            window.location.href = NEXT_PAGE;
+        }
+
+    </script>
+
+
+
+</body>
+</html>

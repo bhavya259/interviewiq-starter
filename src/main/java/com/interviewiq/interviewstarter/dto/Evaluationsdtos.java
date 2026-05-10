@@ -21,7 +21,7 @@ public class Evaluationsdtos
         private boolean success;
         private int score;
         private int fillerWords;
-        private String confidence;
+        private int confidence;
         private String relevences;
         private List<String> strengths;
         private List<String> weaknesses;
