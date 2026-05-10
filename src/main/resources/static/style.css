@@ -1,130 +1,140 @@
 /* ==========================================================================
-   InterviewIQ AI
-   File: style-teaching.css
+   InterviewIQ AI — SHARED STYLESHEET
    --------------------------------------------------------------------------
-       • landing.html
-       • login.html
-       • signup.html
+   Theme    : Purple modern UI (brand color #6C63FF)
+   Loaded by: every HTML file under src/main/resources/static/
    --------------------------------------------------------------------------
-   How this file is organized (top → bottom):
-       SECTION 1  → Global Reset           (all 3 pages)
-       SECTION 2  → Navbar                 (landing only)
-       SECTION 3  → Buttons (reusable)     (all 3 pages)
-       SECTION 4  → Landing page wrapper   (landing only)
-       SECTION 5  → Hero section           (landing only)
-       SECTION 6  → Stats row              (landing only)
-       SECTION 7  → Split layout (base)    (login + signup)
-       SECTION 8  → Auth Card (base)       (login + signup)
-       SECTION 9  → Form inputs (base)     (login + signup)
-       SECTION 10 → Divider                (login + signup)
-       SECTION 11 → Bottom text            (login + signup)
-       SECTION 12 → .auth-page overrides   (login + signup) — refines the base
-       SECTION 13 → .signup-page overrides (signup only)
+   📑 SECTION INDEX — which CSS block belongs to which HTML page
    --------------------------------------------------------------------------
-   NOTE for students:
-   The base rules (sections 7–11) define the GENERIC look of the split layout
-   and form. The `.auth-page ...` rules (section 12) are more specific
-   overrides that fine-tune things only when the <body> has class="auth-page".
-   This is a common pattern: write generic styles first, then page-specific
-   refinements on top.
+     1.  Global Reset / body / <a>           → ALL pages
+     2.  Navbar (.navbar / .logo / .nav-*)   → landing.html
+     3.  Buttons (.btn family)               → reused on EVERY page
+     4.  Landing page wrapper (.landing-page)→ landing.html
+     5.  Hero section (.hero, .badge, etc.)  → landing.html
+     6.  Stats strip (.stats / .stat-box)    → landing.html
+     7.  Split layout (.split-*)             → login.html + signup.html (base)
+     8.  Auth card (.auth-card / .muted)     → login.html + signup.html
+     9.  Form inputs / .forgot               → login.html + signup.html (base)
+    10.  Divider (.divider)                  → login.html + signup.html
+    11.  Bottom text (.bottom-text)          → login.html + signup.html
+    12.  Auth page overrides (.auth-page .*) → login.html + signup.html (polish)
+    13.  Signup-only tweaks (.signup-page)   → signup.html
+    14.  Dashboard (.dashboard-page, sidebar)→ dashboard.html
+    15.  Shared wizard buttons (.btn-back/.btn-next) → setup-role/experience/difficulty/duration
+    16.  Setup panel multi-step              → setup-role.html
+    17.  Experience cards                    → experience.html
+    18.  Difficulty cards                    → difficulty.html
+    19.  Duration cards                      → duration.html
+    20.  Live interview 3-column             → live-interview.html
+    21.  Submitting page (spinner)           → submitting.html
+    22.  Result page meta pills              → result.html
+   --------------------------------------------------------------------------
+   🎨 Color cheat sheet
+     #6C63FF  → primary brand purple
+     #6366F1  → indigo accent (wizard / dashboard)
+     #111827  → primary text (almost black)
+     #6B7280  → muted secondary text
+     #F9FAFB  → page backgrounds
+     #E5E7EB  → light borders
    ========================================================================== */
 
 
 /* ==========================================================================
-   SECTION 1 — GLOBAL RESET
+   1) GLOBAL RESET                                            (ALL pages)
    --------------------------------------------------------------------------
-   Used by : ALL pages
-   Purpose : Browsers add their own default margins, padding and fonts.
-             We wipe them so OUR layout is predictable everywhere.
+   Browsers add their own default margins/padding/fonts. We wipe them so OUR
+   layout behaves the same in every browser. Also sets the base font + bg.
    ========================================================================== */
 * {
-  margin: 0;                              /* remove default margins on every element */
-  padding: 0;                             /* remove default padding on every element */
-  box-sizing: border-box;                 /* width includes padding + border (easier math) */
-  font-family: 'Poppins', sans-serif;     /* one font across the whole app */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-  background: linear-gradient(180deg, #F5F7FB 0%, #ECEEFB 100%);  /* soft top-to-bottom bg */
-  color: #222;                            /* default text color */
-  line-height: 1.6;                       /* comfortable reading spacing */
-  min-height: 100vh;                      /* body always fills the viewport */
+  background: linear-gradient(180deg, #F5F7FB 0%, #ECEEFB 100%);
+  color: #222;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
 a {
-  text-decoration: none;                  /* remove the default underline on links */
-  color: inherit;                         /* links use the parent's text color */
+  text-decoration: none;
+  color: inherit;
 }
-
 
 /* ==========================================================================
-   SECTION 2 — NAVBAR
+   2) NAVBAR                                                  (landing.html)
    --------------------------------------------------------------------------
-   Used by : landing.html
-   HTML    : <nav class="navbar">
-                <div class="logo">Interview<span>IQ</span></div>
-                <ul class="nav-links"> ... </ul>
-             </nav>
-   Purpose : Sticky frosted-glass top bar with logo on the left and links
-             on the right.
+   The sticky frosted-glass top bar shown only on the landing page.
+   HTML : <nav class="navbar">
+            <div class="logo">Interview<span>IQ</span></div>
+            <ul class="nav-links"> <li><a>...</a></li> ... </ul>
+          </nav>
+   Notes:
+     • position:sticky + top:0 keeps it pinned while scrolling.
+     • backdrop-filter:blur creates the "frosted glass" look behind the bar.
+     • .nav-links .btn-primary forces white text when a nav link uses the
+       primary button styling (otherwise it would inherit nav-link gray).
    ========================================================================== */
 .navbar {
-  display: flex;                                      /* logo + links on one row */
-  justify-content: space-between;                     /* push them to opposite ends */
-  align-items: center;                                /* vertically center them */
-  padding: 16px 60px;                                 /* breathing room */
-  background: rgba(255, 255, 255, 0.75);              /* semi-transparent white */
-  backdrop-filter: blur(14px);                        /* frosted glass effect */
-  border-bottom: 1px solid rgba(108, 99, 255, 0.08);  /* subtle purple separator */
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);         /* soft drop shadow */
-  position: sticky;                                   /* stays at top while scrolling */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 60px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(108, 99, 255, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  position: sticky;
   top: 0;
-  z-index: 100;                                       /* sit above hero glow etc. */
+  z-index: 100;
 }
 
-/* Brand / logo on the left */
 .logo {
   font-size: 24px;
   font-weight: 700;
-  color: #6C63FF;                         /* brand purple */
+  color: #6C63FF;
   letter-spacing: -0.3px;
 }
 .logo span {
-  color: #333;                            /* second word ("IQ") in dark gray */
+  color: #333;
 }
 
-/* Right-side nav list */
 .nav-links {
   display: flex;
-  list-style: none;                       /* remove the bullet dots */
-  gap: 36px;                              /* space between items */
+  list-style: none;
+  gap: 36px;
   align-items: center;
 }
 .nav-links a {
   font-size: 15px;
   font-weight: 500;
   color: #555;
-  transition: 0.2s;                       /* smooth hover color change */
+  transition: 0.2s;
 }
 .nav-links a:hover {
-  color: #6C63FF;                         /* turn purple on hover */
+  color: #6C63FF;
 }
-/* If a nav link uses .btn-primary, force its text white (overrides inherit) */
 .nav-links .btn-primary {
   color: white;
 }
 
-
 /* ==========================================================================
-   SECTION 3 — BUTTONS (REUSABLE)
+   3) BUTTONS — REUSABLE                                      (ALL pages)
    --------------------------------------------------------------------------
-   Used by : ALL pages
-   Pattern : One base ".btn" class + variant classes for color/size.
-             Combine them in HTML, e.g.:
-                 <button class="btn btn-primary btn-full">Login</button>
+   Pattern: combine ".btn" base with a variant class, e.g.
+     <button class="btn btn-primary btn-full">Login</button>
+   --------------------------------------------------------------------------
+   Variants available:
+     .btn-primary  → solid purple gradient (main action: Sign Up, Login...)
+     .btn-outline  → transparent w/ purple border (secondary action)
+     .btn-cta      → big "Get Started" button on landing hero
+     .btn-sm       → smaller padding (used in navbar)
+     .btn-full     → 100% width (used inside auth forms)
+   Hover effect everywhere: 2px lift + bigger shadow for tactile feel.
    ========================================================================== */
-
-/* Base — shared shape used by every button */
 .btn {
   display: inline-block;
   padding: 12px 26px;
@@ -133,23 +143,21 @@ a {
   cursor: pointer;
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.25s ease;             /* smooth hover animation */
+  transition: all 0.25s ease;
   text-align: center;
 }
 
-/* Solid purple gradient button (e.g. "Sign Up", "Login") */
 .btn-primary {
   background: linear-gradient(135deg, #6C63FF, #8B85FF);
   color: white;
   box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, #5a54e0, #7a73f0);  /* slightly darker */
-  transform: translateY(-2px);                            /* lift effect */
+  background: linear-gradient(135deg, #5a54e0, #7a73f0);
+  transform: translateY(-2px);
   box-shadow: 0 12px 26px rgba(108, 99, 255, 0.45);
 }
 
-/* Outlined button (e.g. "Login" link in navbar) */
 .btn-outline {
   background: transparent;
   border: 1px solid #6C63FF;
@@ -160,7 +168,7 @@ a {
   transform: translateY(-2px);
 }
 
-/* Hero call-to-action button ("Get Started") */
+/* CTA button (Get Started) */
 .btn-cta {
   background: linear-gradient(90deg, #6C63FF, #7A70FF);
   color: white;
@@ -178,67 +186,74 @@ a {
   color: white;
 }
 
-/* Size variant — smaller button used inside the navbar */
 .btn-sm {
   padding: 8px 18px;
   font-size: 14px;
 }
 
-/* Width variant — full width button used inside auth forms */
 .btn-full {
   width: 100%;
   margin-top: 10px;
 }
 
-
 /* ==========================================================================
-   SECTION 4 — LANDING PAGE WRAPPER
+   4) LANDING PAGE WRAPPER                                    (landing.html)
    --------------------------------------------------------------------------
-   Used by : landing.html
-   HTML    : <body class="landing-page">
-   Purpose : Force the landing page to fit in ONE screen (no scroll).
-             Uses a column flexbox so navbar sits on top, hero fills the rest.
+   HTML : <body class="landing-page">
+   Goal : Fit the entire landing page in ONE viewport (no scrolling).
+          Uses a column flexbox so the navbar sits on top, hero fills below.
    ========================================================================== */
 .landing-page {
-  height: 100vh;                                          /* full viewport height */
-  overflow: hidden;                                       /* no scroll allowed */
-  background: linear-gradient(135deg, #eef1ff, #f7f8ff);  /* soft purple bg */
-  display: flex;
-  flex-direction: column;                                 /* navbar on top, hero below */
-}
-
-
-/* ==========================================================================
-   SECTION 5 — HERO SECTION
-   --------------------------------------------------------------------------
-   Used by : landing.html
-   HTML    : <section class="hero">
-                <div class="hero-inner">
-                    <div class="hero-left"> ...text + buttons... </div>
-                    <div class="hero-right"><img ...></div>
-                </div><div class="stats"> ... </div>      ← optional
-             </section>
-   ========================================================================== */
-.hero {
-  position: relative;                     /* needed so the ::before glow can absolute-position */
-  flex: 1;                                /* fills all space below the navbar */
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #eef1ff, #f7f8ff);
   display: flex;
   flex-direction: column;
-  justify-content: center;                /* vertically center hero content */
+}
+
+/* ==========================================================================
+   5) HERO SECTION                                            (landing.html)
+   --------------------------------------------------------------------------
+   Two-column area: text on the left, illustration on the right.
+   HTML pattern:
+     <section class="hero">
+       <div class="hero-inner">
+         <div class="hero-left">
+           <span class="badge">AI-Powered</span>
+           <h1>Practice with <span class="gradient-text">AI</span></h1>
+           <p class="subtitle">...</p>
+           <div class="hero-buttons">...</div>
+         </div>
+         <div class="hero-right"><img></div>
+       </div>
+     </section>
+   --------------------------------------------------------------------------
+   Tricks worth pointing out to students:
+     • .hero::before  → decorative purple radial glow (pointer-events:none
+       so clicks pass through).
+     • .gradient-text → uses -webkit-background-clip:text + transparent fill
+       to make text show a gradient instead of a solid color.
+     • flex:1 on .hero  → it stretches to fill remaining height below navbar.
+   ========================================================================== */
+.hero {
+  position: relative;
+  flex: 1;                 /* fills space below navbar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 30px 60px 0;
-  overflow: hidden;                       /* clip the decorative glow */
+  overflow: hidden;
 }
 
-/* Decorative purple glow sitting behind the right side of the hero */
+/* Soft purple glow behind the illustration */
 .hero::before {
-  content: "";                            /* ::before requires content */
+  content: "";
   position: absolute;
-  inset: 0;                               /* shorthand for top/right/bottom/left: 0 */
+  inset: 0;
   background: radial-gradient(circle at right, rgba(108, 99, 255, 0.15), transparent 60%);
-  pointer-events: none;                   /* glow is decorative, not clickable */
+  pointer-events: none;
 }
 
-/* Two-column row inside the hero (text left, image right) */
 .hero-inner {
   display: flex;
   align-items: center;
@@ -246,161 +261,177 @@ a {
   gap: 60px;
   max-width: 1280px;
   width: 100%;
-  margin: 0 auto;                         /* center horizontally */
+  margin: 0 auto;
   flex: 1;
   position: relative;
-  z-index: 1;                             /* sit above the ::before glow */
+  z-index: 1;
 }
 
-/* LEFT column — heading, subtitle, buttons */
 .hero-left {
   flex: 1;
-  max-width: 560px;
 }
 
-/* Small "AI-Powered" pill above the heading */
 .badge {
   display: inline-block;
   background: rgba(108, 99, 255, 0.1);
   color: #6C63FF;
-  padding: 6px 14px;
-  border-radius: 999px;                   /* fully rounded */
-  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 500;
   margin-bottom: 18px;
+  border: 1px solid rgba(108, 99, 255, 0.2);
 }
 
-/* Big hero heading */
 .hero-left h1 {
-  font-size: 48px;
-  line-height: 1.2;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -1px;
   margin-bottom: 18px;
   color: #1a1a2e;
-  letter-spacing: -0.5px;
 }
 
-/* Purple gradient TEXT effect (inside the heading) */
 .gradient-text {
   background: linear-gradient(135deg, #6C63FF, #8B85FF);
-  -webkit-background-clip: text;          /* clip the gradient to the text shape */
-  -webkit-text-fill-color: transparent;   /* hide the actual text color so gradient shows */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Paragraph below the heading */
 .subtitle {
   color: #666;
-  font-size: 16px;
-  max-width: 480px;
+  font-size: 17px;
   margin-bottom: 28px;
+  max-width: 500px;
+  line-height: 1.65;
 }
 
-/* Row of buttons under the subtitle */
 .hero-buttons {
   display: flex;
-  gap: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-/* RIGHT column — illustration */
 .hero-right {
   flex: 1;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 .hero-right img {
-  max-width: 100%;
-  height: auto;
-  transition: transform 0.4s ease;        /* smooth hover zoom */
+  max-width: 420px;
+  width: 100%;
+  filter: drop-shadow(0 20px 40px rgba(108, 99, 255, 0.3));
+  transform: scale(1.1);
+  transition: transform 0.4s ease;
 }
 .hero-right img:hover {
-  transform: translateY(-6px) scale(1.02);/* slight lift + zoom on hover */
+  transform: scale(1.13);
 }
 
-
 /* ==========================================================================
-   SECTION 6 — STATS ROW (anchored at bottom of hero)
+   6) STATS STRIP                                             (landing.html)
    --------------------------------------------------------------------------
-   Used by : landing.html (optional — only if you add a stats row)
-   HTML    : <div class="stats">
-                <div class="stat-box"><h2>10k+</h2><p>Users</p></div>
-                ...
-             </div>
+   The white floating card under the hero showing big numbers (e.g. "10k+").
+   HTML : <div class="stats">
+            <div class="stat-box"><h2>10k+</h2><p>Users</p></div>
+            ...
+          </div>
+   Note: .stat-box:last-child removes the right border on the final box.
    ========================================================================== */
 .stats {
+  position: relative;
+  z-index: 2;
   display: flex;
-  gap: 40px;
-  margin-top: 30px;
-  padding: 20px 0;
-  border-top: 1px solid rgba(108, 99, 255, 0.1);
+  justify-content: space-around;
+  background: white;
+  padding: 20px;
+  margin: 0 auto 24px;
+  max-width: 1180px;
+  width: calc(100% - 80px);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(108, 99, 255, 0.12);
+  border: 1px solid rgba(108, 99, 255, 0.06);
 }
 
 .stat-box {
-  border-right: 1px solid rgba(108, 99, 255, 0.1);  /* vertical separator */
-  padding-right: 40px;
+  text-align: center;
+  padding: 0 20px;
+  flex: 1;
+  border-right: 1px solid #eee;
 }
 .stat-box:last-child {
-  border-right: none;                               /* no separator after last item */
+  border-right: none;
 }
 .stat-box h2 {
-  font-size: 24px;
-  color: #6C63FF;
+  background: linear-gradient(135deg, #6C63FF, #8B85FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 28px;
   font-weight: 700;
+  margin-bottom: 2px;
 }
 .stat-box p {
-  font-size: 13px;
   color: #666;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-
 /* ==========================================================================
-   SECTION 7 — SPLIT LAYOUT (BASE)
+   7) SPLIT LAYOUT — BASE                                     (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <div class="split-container">
-                <div class="split-left"> ...image... </div>
-                <div class="split-right"> ...auth card... </div>
-             </div>
-   Purpose : Two equal columns side-by-side filling the screen.
+   Two equal columns side by side filling the screen.
+   HTML : <div class="split-container">
+            <div class="split-left">  ...image...   </div>
+            <div class="split-right"> ...form card... </div>
+          </div>
+   ⚠️ These are the BASE rules. Section 12 (.auth-page .split-*) overrides
+       them with a polished gradient background + custom paddings for the
+       actual login/signup pages.
    ========================================================================== */
 .split-container {
   display: flex;
-  height: 100vh;                          /* full screen */
+  min-height: 100vh;
 }
 
-/* LEFT — illustration panel */
 .split-left {
-  flex: 1;                                /* take half the width */
+  flex: 1;
   background: linear-gradient(135deg, #6C63FF, #8B85FF);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .split-left img {
-  max-width: 70%;
+  max-width: 380px;
+  width: 80%;
 }
 
-/* RIGHT — area that holds the auth form card */
 .split-right {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  padding: 40px;
 }
 
-
 /* ==========================================================================
-   SECTION 8 — AUTH CARD (BASE)
+   8) AUTH CARD — BASE                                        (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <div class="auth-card"> ...form... </div>
-   Purpose : The white card that holds the login/signup form.
+   The white form card sitting inside .split-right.
+   HTML : <div class="auth-card"> <h2>...</h2> <form>...</form> </div>
+   .muted → small grey helper line beneath the heading
+            (e.g. "Welcome back, please login").
+   Again: section 12 refines these for .auth-page.
    ========================================================================== */
 .auth-card {
-  width: 380px;
+  background: white;
   padding: 40px;
   border-radius: 12px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
 }
 
 .auth-card h2 {
@@ -409,26 +440,24 @@ a {
   color: #222;
 }
 
-/* Small helper line beneath the heading */
 .muted {
   color: #777;
   margin-bottom: 25px;
   font-size: 14px;
 }
 
-
 /* ==========================================================================
-   SECTION 9 — FORM INPUTS (BASE)
+   9) FORM INPUTS — BASE                                      (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <form><label>..</label><input ...></form>
+   Generic styling for any <form> on the auth pages.
+   .forgot → right-aligned "Forgot password?" link (login only).
+   On focus, the input border turns purple + a soft outer glow appears.
    ========================================================================== */
 form label {
   display: block;
   margin-top: 14px;
   margin-bottom: 6px;
   font-size: 14px;
-  color: #444;
   font-weight: 500;
 }
 
@@ -439,38 +468,38 @@ form input {
   border-radius: 8px;
   font-size: 14px;
   outline: none;
-  transition: border 0.2s;
+  transition: 0.25s;
 }
 
 form input:focus {
-  border-color: #6C63FF;                  /* purple border when typing */
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
 }
 
-/* "Forgot password?" link — right-aligned (login page) */
 .forgot {
   text-align: right;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 13px;
 }
 .forgot a {
   color: #6C63FF;
 }
 
-
 /* ==========================================================================
-   SECTION 10 — DIVIDER ("or" line between form and Google button)
+   10) DIVIDER ("or")                                         (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <div class="divider"><span>or</span></div>
-   Trick   : Two horizontal lines drawn with ::before and ::after pseudo
-             elements, sitting on each side of the centered word.
+   The horizontal line with the word "or" centered on it, between the form
+   and the Google button.
+   HTML : <div class="divider"><span>or</span></div>
+   How it works: ::before draws a line on the left, ::after on the right,
+   each 40% wide, sitting at the vertical middle (top:50%).
    ========================================================================== */
 .divider {
-  position: relative;
   text-align: center;
-  margin: 25px 0;
-  font-size: 13px;
+  margin: 18px 0;
+  position: relative;
   color: #999;
+  font-size: 13px;
 }
 .divider::before,
 .divider::after {
@@ -484,16 +513,16 @@ form input:focus {
 .divider::before { left: 0; }
 .divider::after  { right: 0; }
 
-
 /* ==========================================================================
-   SECTION 11 — BOTTOM TEXT ("Don't have an account? Sign up")
+   11) BOTTOM TEXT                                            (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <p class="bottom-text">...<a>...</a></p>
+   The "Don't have an account? Sign up" line centered at the bottom of the
+   auth card.
+   HTML : <p class="bottom-text">... <a>Sign up</a></p>
    ========================================================================== */
 .bottom-text {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 14px;
   color: #555;
 }
@@ -502,38 +531,49 @@ form input:focus {
   font-weight: 500;
 }
 
-
 /* ==========================================================================
-   SECTION 12 — .auth-page OVERRIDES
+   12) AUTH PAGE OVERRIDES                                    (login + signup)
    --------------------------------------------------------------------------
-   Used by : login.html, signup.html
-   HTML    : <body class="auth-page">                ← login
-             <body class="auth-page signup-page">    ← signup
+   HTML : <body class="auth-page">              ← login
+          <body class="auth-page signup-page">  ← signup
    --------------------------------------------------------------------------
-   IMPORTANT (for students):
-   The rules above (sections 7–11) are GENERIC. The rules below are MORE
-   SPECIFIC because they start with ".auth-page ...". When two rules target
-   the same element, the more specific one wins (CSS specificity).
-   This is how we keep a generic style and still polish auth pages further.
+   Why these exist:
+     The base rules in sections 7–11 give a generic split-layout look.
+     These ".auth-page .xxx" rules are MORE SPECIFIC selectors so they win,
+     letting us polish the actual login/signup pages without touching the
+     base styles. This is **CSS specificity** in action — great teaching
+     moment for students.
+   What they change:
+     • .split-left  → light gradient background (instead of solid purple)
+                       + drop-shadow on the illustration
+     • .brand-block → top-left corner logo + tagline (absolute positioned)
+     • .split-right → light grey background instead of pure white
+     • .auth-card   → softer shadow, larger radius, max-width 400
+     • inputs       → bigger padding, focus ring
+     • .btn-primary → full-width gradient button (overrides base)
+     • .divider     → only ONE line (cancels the ::after from section 10)
+     • .btn-google  → white "Continue with Google" button
    ========================================================================== */
-
-/* Page wrapper — auth pages must not scroll */
 .auth-page {
   height: 100vh;
   overflow: hidden;
   background: #f7f8ff;
 }
 
-/* Override split-container height in auth pages */
 .auth-page .split-container {
+  display: flex;
   height: 100vh;
+  min-height: unset;
 }
 
-/* ----- LEFT panel: branded gradient illustration area ----- */
+/* ----- LEFT: branded gradient illustration panel ----- */
 .auth-page .split-left {
   flex: 1;
   position: relative;
   background: linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 40%, #E0E7FF 100%);
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), transparent 60%),
+    linear-gradient(135deg, #F8FAFF 0%, #EEF2FF 40%, #E0E7FF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -543,20 +583,23 @@ form input:focus {
 .auth-page .split-left img {
   width: 380px;
   max-width: 80%;
-  filter: drop-shadow(0 18px 35px rgba(108, 99, 255, 0.18));  /* soft purple shadow */
+  margin-left: 40px;
+  filter: drop-shadow(0 18px 35px rgba(108, 99, 255, 0.18));
 }
 
-/* ----- Top-left brand block (logo + tagline) inside left panel ----- */
+/* ----- Top-left brand (logo + tagline) ----- */
 .auth-page .brand-block {
-  position: absolute;                     /* pin to corner */
+  position: absolute;
   top: 40px;
   left: 80px;
   z-index: 2;
+  line-height: 1.2;
 }
 .auth-page .brand-logo {
   font-size: 18px;
   font-weight: 600;
   color: #6C63FF;
+  letter-spacing: -0.2px;
 }
 .auth-page .brand-tagline {
   font-size: 13px;
@@ -564,17 +607,17 @@ form input:focus {
   margin-top: 4px;
 }
 
-/* ----- RIGHT panel: form area ----- */
+/* ----- RIGHT: form area ----- */
 .auth-page .split-right {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F9FAFB;
   padding: 30px;
+  background: #F9FAFB;
 }
 
-/* ----- Auth card (compact version for auth pages) ----- */
+/* ----- Auth Card (compact) ----- */
 .auth-page .auth-card {
   background: #FFFFFF;
   padding: 40px;
@@ -588,17 +631,20 @@ form input:focus {
   font-size: 24px;
   font-weight: 600;
   color: #111827;
+  letter-spacing: -0.3px;
   margin-bottom: 6px;
 }
 .auth-page .muted {
   color: #6B7280;
   font-size: 14px;
+  line-height: 1.5;
   margin-bottom: 20px;
 }
 
-/* ----- Form fields (auth-page version) ----- */
+/* ----- Form fields ----- */
 .auth-page form label {
   display: block;
+  margin-top: 4px;
   margin-bottom: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -610,7 +656,10 @@ form input:focus {
   border: 1px solid #E5E7EB;
   border-radius: 8px;
   margin-bottom: 20px;
+  background: #FFFFFF;
   font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  color: #111827;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -619,7 +668,7 @@ form input:focus {
   box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
 }
 
-/* ----- Forgot password link in auth pages ----- */
+/* ----- Forgot password ----- */
 .auth-page .forgot {
   text-align: right;
   margin-top: -8px;
@@ -627,31 +676,32 @@ form input:focus {
   font-size: 12px;
 }
 .auth-page .forgot a {
-  color: #6C63FF;
+  color: #7C6CF6;
   font-weight: 500;
 }
 
-/* ----- Login/Sign up button (full-width gradient) ----- */
+/* ----- Login button (full width gradient) ----- */
 .auth-page .btn-primary {
-  width: 100%;
-  padding: 13px;
   background: linear-gradient(90deg, #6C63FF, #7A70FF);
   color: white;
-  border: none;
-  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.25);
+  padding: 14px;
   font-size: 14px;
   font-weight: 500;
+  border-radius: 8px;
+  width: 100%;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(108, 99, 255, 0.25);
-  transition: 0.25s;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 .auth-page .btn-primary:hover {
   background: linear-gradient(90deg, #5A54E8, #6C63FF);
+  box-shadow: 0 8px 18px rgba(108, 99, 255, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(108, 99, 255, 0.35);
 }
 
-/* ----- Divider in auth pages (single line behind centered word) ----- */
+/* ----- Divider ----- */
 .auth-page .divider {
   text-align: center;
   margin: 28px 0;
@@ -660,7 +710,7 @@ form input:focus {
   font-size: 12px;
 }
 .auth-page .divider span {
-  background: #FFFFFF;                    /* hides the line behind the word */
+  background: #FFFFFF;
   padding: 0 12px;
   position: relative;
   z-index: 1;
@@ -674,10 +724,9 @@ form input:focus {
   height: 1px;
   background: #E5E7EB;
 }
-/* Cancel the second line that section 10 added — only one line in auth pages */
 .auth-page .divider::after { content: none; }
 
-/* ----- Google sign-in button ----- */
+/* ----- Google button ----- */
 .auth-page .btn-google {
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
@@ -692,13 +741,15 @@ form input:focus {
   gap: 8px;
   cursor: pointer;
   width: 100%;
+  font-family: 'Poppins', sans-serif;
   transition: 0.2s;
 }
 .auth-page .btn-google:hover {
   background: #F9FAFB;
+  transform: translateY(-1px);
 }
 
-/* ----- Bottom text in auth pages ----- */
+/* ----- Bottom text ----- */
 .auth-page .bottom-text {
   text-align: center;
   margin-top: 22px;
@@ -710,37 +761,1292 @@ form input:focus {
   font-weight: 500;
 }
 
-
 /* ==========================================================================
-   SECTION 13 — .signup-page OVERRIDES
+   13) SIGNUP-ONLY OVERRIDES                                  (signup.html)
    --------------------------------------------------------------------------
-   Used by : signup.html only
-   HTML    : <body class="auth-page signup-page">
-   Purpose : Tiny tweaks on top of the shared auth styles to differentiate
-             the signup page from the login page.
+   HTML : <body class="auth-page signup-page">
+   Tiny tweaks layered on top of the shared .auth-page styles to differentiate
+   signup from login (slightly smaller heading, different image alignment).
    ========================================================================== */
-
-/* Slightly smaller heading on signup card */
 .signup-page .auth-card h2 {
   font-size: 22px;
 }
 
-/* Center the signup illustration (no left offset like login) */
+/* Center signup illustration (no offset like login) */
 .signup-page .split-left img {
   margin-left: 0;
 }
 
-/* Consistent spacing for "Already have an account?" line */
+/* Consistent spacing for the "Already have an account?" line */
 .signup-page .bottom-text {
-  margin-top: 22px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #6B7280;
 }
 
+/* ==========================================================================
+   14) DASHBOARD                                              (dashboard.html)
+   --------------------------------------------------------------------------
+   Sidebar on the left + main content area on the right.
+   HTML : <body class="dashboard-page">
+            <div class="dash-layout">
+              <aside class="sidebar"> ...menu... </aside>
+              <main class="dash-main"> ...cards... </main>
+            </div>
+          </body>
+   --------------------------------------------------------------------------
+   Pieces:
+     .sidebar          → 220px fixed-width left column
+     .sidebar-logo     → brand at top of the sidebar
+     .sidebar-menu     → vertical list of nav items
+     .menu-item.active → currently selected page (purple highlight)
+     .dash-main        → scrollable main area
+     .dash-header      → row with page title + "Start Interview" button
+     .btn-start        → CTA button (Start a new interview)
+     .dash-card        → reusable white content card
+   ========================================================================== */
+.dashboard-page {
+  height: 100vh;
+  overflow: hidden;
+  background: #F9FAFB;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dash-layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* ----- Sidebar ----- */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #FFFFFF;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #6C63FF;
+  letter-spacing: -0.3px;
+  padding: 0 8px 28px;
+  border-bottom: 1px solid #F3F4F6;
+  margin-bottom: 18px;
+}
+.sidebar-logo span {
+  color: #111827;
+  font-weight: 600;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  display: block;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: 0.2s;
+}
+.menu-item:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+.menu-item.active {
+  background: rgba(108, 99, 255, 0.1);
+  color: #6C63FF;
+}
+
+/* ----- Main content area ----- */
+.dash-main {
+  flex: 1;
+  padding: 32px 40px;
+  overflow-y: auto;
+}
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.dash-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+/* ----- Start Interview button ----- */
+.btn-start {
+  background: linear-gradient(90deg, #6C63FF, #7A70FF);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.25);
+  transition: 0.25s;
+}
+.btn-start:hover {
+  background: linear-gradient(90deg, #5A54E8, #6C63FF);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(108, 99, 255, 0.35);
+}
+
+/* ----- Welcome card ----- */
+.dash-card {
+  background: #FFFFFF;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.dash-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.dash-card p {
+  font-size: 14px;
+  color: #6B7280;
+}
 
 /* ==========================================================================
-   END OF FILE
+   15) SHARED WIZARD BUTTONS                       (setup-role.html,
+                                                    experience.html,
+                                                    difficulty.html,
+                                                    duration.html)
    --------------------------------------------------------------------------
-   Quick recap of what each page uses:
-       landing.html → sections 1, 2, 3, 4, 5, 6
-       login.html   → sections 1, 3, 7, 8, 9, 10, 11, 12
-       signup.html  → sections 1, 3, 7, 8, 9, 10, 11, 12, 13
+   The .btn-back and .btn-next styles below are USED by every page in the
+   multi-step interview wizard.
+
+   The other selectors in this block (.setup-page, .setup-wrapper,
+   .step-indicator, .setup-title, .setup-subtitle, .option-grid,
+   .option-card, .setup-nav) are leftovers from a removed legacy
+   single-page setup ("interview-setup.html" / "questions.html"). They
+   are no longer used by any HTML but kept here as reference styles —
+   safe to delete if you want to slim the file down.
    ========================================================================== */
+.setup-page {
+  min-height: 100vh;
+  background: #F9FAFB;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+.setup-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ----- Step indicator ----- */
+.step-indicator {
+  display: inline-block;
+  background: #EEF2FF;
+  color: #6366F1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+/* ----- Title + subtitle ----- */
+.setup-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+.setup-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 24px;
+}
+
+/* ----- Option grid ----- */
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 700px;
+  margin: 0 auto 24px;
+}
+.option-grid.two-cols   { grid-template-columns: repeat(2, 1fr); max-width: 480px; }
+.option-grid.three-cols { grid-template-columns: repeat(3, 1fr); max-width: 600px; }
+
+.option-card {
+  background: #FFFFFF;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  transition: 0.2s;
+}
+.option-card:hover {
+  border-color: #6366F1;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+.option-card.selected {
+  border: 1px solid #6366F1;
+  background: #F5F6FF;
+  color: #4F46E5;
+}
+
+/* ----- Navigation buttons ----- */
+.setup-nav {
+  max-width: 700px;
+  margin: 20px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-back {
+  border: 1px solid #E5E7EB;
+  background: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-back:hover {
+  background: #F3F4F6;
+}
+
+.btn-next {
+  background: linear-gradient(90deg, #6366F1, #7C3AED);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.2);
+  transition: 0.25s;
+}
+.btn-next:hover {
+  background: linear-gradient(90deg, #4F46E5, #6D28D9);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 600px) {
+  .option-grid,
+  .option-grid.three-cols { grid-template-columns: repeat(2, 1fr); }
+  .setup-title { font-size: 22px; }
+}
+
+/* ==========================================================================
+   16) SETUP PANEL — MULTI-STEP WIZARD                       (setup-role.html)
+   --------------------------------------------------------------------------
+   Bigger / fancier wizard layout used for the role-selection screen.
+   Has a top header, a numbered step-progress bar, a centered role grid, and
+   a footer with back/next buttons stuck to the bottom.
+   HTML pattern:
+     <body class="setup-panel-page">
+       <div class="main-container">
+         <div class="top-section">
+           <div class="panel-header">...</div>
+           <div class="step-bar">
+             <div class="step done"><div class="step-circle">✓</div><span class="step-label">Role</span></div>
+             <div class="step-line"></div>
+             <div class="step active"><div class="step-circle">2</div><span class="step-label">Experience</span></div>
+             ...
+           </div>
+           <div class="section-heading"><h2>...</h2><p>...</p></div>
+         </div>
+         <div class="role-grid">
+           <div class="role-card selected">
+             <div class="role-icon">💻</div>
+             <div class="role-label">Frontend Developer</div>
+           </div>
+           ...
+         </div>
+         <div class="footer-actions">
+           <button class="btn-back">Back</button>
+           <button class="btn-next">Next</button>
+         </div>
+       </div>
+     </body>
+   Step states:  default = grey circle, .active = purple, .done = light purple.
+   ========================================================================== */
+.setup-panel-page {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #F9FAFB;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Main wrapper fills the screen and pushes footer to bottom */
+.main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 60px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* ----- TOP section ----- */
+.top-section {
+  flex-shrink: 0;
+}
+
+.panel-header {
+  margin-bottom: 18px;
+}
+.panel-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+.panel-header p {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+/* ----- Step Progress Bar ----- */
+.step-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #F3F4F6;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #D1D5DB;
+  background: white;
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.step.active .step-circle {
+  background: #6366F1;
+  color: white;
+  border-color: #6366F1;
+}
+.step.done .step-circle {
+  background: #EEF2FF;
+  color: #6366F1;
+  border-color: #6366F1;
+}
+.step-label {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+}
+.step.active .step-label {
+  color: #111827;
+  font-weight: 600;
+}
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: #E5E7EB;
+  margin: 0 8px 22px;
+}
+
+/* ----- Section Heading ----- */
+.section-heading h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+.section-heading p {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+/* ----- MIDDLE: Role grid (centered) ----- */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: auto;
+  max-width: 900px;
+  width: 100%;
+}
+
+.role-card {
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.role-card:hover {
+  border-color: #6366F1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+.role-card.selected {
+  border: 2px solid #6366F1;
+  background: #F5F6FF;
+}
+
+.role-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.role-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+.role-card.selected .role-label {
+  color: #4F46E5;
+  font-weight: 600;
+}
+
+/* ----- BOTTOM: Footer actions ----- */
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 18px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.setup-panel-page .btn-back {
+  border: 1px solid #E5E7EB;
+  background: white;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.setup-panel-page .btn-back:hover {
+  background: #F3F4F6;
+}
+
+.setup-panel-page .btn-next {
+  background: linear-gradient(90deg, #6366F1, #7C3AED);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.2);
+  transition: 0.25s;
+}
+.setup-panel-page .btn-next:hover {
+  background: linear-gradient(90deg, #4F46E5, #6D28D9);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 800px) {
+  .setup-panel-page { height: auto; overflow: auto; }
+  .main-container { padding: 24px; }
+  .role-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .step-label { display: none; }
+  .step-line { margin-bottom: 0; }
+}
+
+/* ----- Experience cards (Step 2: two large centered cards) ----- */
+.experience-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: auto;
+}
+
+.experience-card {
+  width: 320px;
+  padding: 44px 32px;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  text-align: center;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.experience-card:hover {
+  border-color: #6366F1;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+.experience-card.selected {
+  border: 2px solid #6366F1;
+  background: #F5F6FF;
+}
+
+.exp-icon {
+  font-size: 48px;
+  margin-bottom: 18px;
+}
+.exp-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.experience-card.selected .exp-title {
+  color: #4F46E5;
+}
+.exp-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* Mobile: stack the two cards vertically */
+@media (max-width: 600px) {
+  .experience-row { flex-direction: column; align-items: center; gap: 16px; }
+  .experience-card { width: 100%; max-width: 320px; padding: 22px; }
+}
+
+/* ----- Difficulty cards (Step 3: three colored cards) ----- */
+.difficulty-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin: auto;
+}
+
+.difficulty-card {
+  width: 280px;
+  padding: 36px 28px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+.difficulty-card.easy   { background: #ECFDF5; border-color: #A7F3D0; }
+.difficulty-card.medium { background: #FFFBEB; border-color: #FDE68A; }
+.difficulty-card.hard   { background: #FEF2F2; border-color: #FCA5A5; }
+
+.difficulty-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+.difficulty-card.selected {
+  border: 2px solid #6366F1;
+  background: #EEF2FF;
+}
+
+.diff-icon {
+  font-size: 46px;
+  margin-bottom: 16px;
+}
+.diff-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.difficulty-card.selected .diff-title {
+  color: #4F46E5;
+}
+.diff-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 700px) {
+  .difficulty-row { flex-direction: column; align-items: center; gap: 14px; }
+  .difficulty-card { width: 100%; max-width: 320px; }
+}
+
+/* ----- Duration cards (Step 4: three cards, middle Recommended) ----- */
+.duration-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 32px;
+  margin: auto;
+}
+
+.duration-card {
+  position: relative;
+  width: 290px;
+  padding: 42px 28px;
+  border-radius: 14px;
+  text-align: center;
+  background: white;
+  border: 1px solid #E5E7EB;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.duration-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  border-color: #C7D2FE;
+}
+.duration-card.selected {
+  border: 2px solid #6366F1;
+  background: #F5F6FF;
+}
+
+/* Recommended highlight (default style for the middle card) */
+.duration-card.recommended {
+  border-color: #C7D2FE;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.08);
+}
+
+.recommended-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #EEF2FF;
+  color: #6366F1;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.dur-icon {
+  font-size: 50px;
+  margin-bottom: 18px;
+}
+.dur-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+.duration-card.selected .dur-title {
+  color: #4F46E5;
+}
+.dur-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 700px) {
+  .duration-row { flex-direction: column; align-items: center; gap: 18px; }
+  .duration-card { width: 100%; max-width: 320px; }
+}
+
+/* ==========================================================================
+   LIVE INTERVIEW — 3-COLUMN LAYOUT                     (live-interview.html)
+   --------------------------------------------------------------------------
+   The most complex page in the app. THREE columns side by side:
+     LEFT   → AI Interviewer panel (avatar + tips)
+     CENTER → Question, answer area (typed or voice), submit button
+     RIGHT  → Progress tracker (Q1, Q2, Q3...)
+   --------------------------------------------------------------------------
+   HTML skeleton:
+     <body class="interview-page">
+       <div class="interview-layout">
+         <aside class="ai-panel">...</aside>
+         <main class="interview-main">
+           <div class="live-bar">
+             <span class="live-indicator"><span class="live-dot"></span>LIVE</span>
+             <span class="live-timer">12:34</span>     ← +.ending when low
+           </div>
+           <div class="question-header">
+             <span class="q-label">Question 1 of 5</span>
+             <span class="q-tag">technical</span>
+             <span class="q-status">Answered</span>
+           </div>
+           <h2 class="question-text">...</h2>
+
+           <div class="answer-tabs">                  ← Type / Voice toggle
+             <button class="tab active">Type</button>
+             <button class="tab">Voice</button>
+           </div>
+
+           <div class="answer-panel">                 ← typed mode
+             <textarea class="answer-input"></textarea>
+           </div>
+
+           <div class="answer-panel hidden">          ← voice mode
+             <div class="voice-card">
+               <button class="big-mic">🎙️</button>   ← +.recording when active
+               <p class="voice-status">Click to start</p>
+               <div class="transcript-box">...</div>
+             </div>
+           </div>
+
+           <div class="interview-actions">
+             <button class="btn-mic">Microphone</button>
+             <button class="btn-submit">Submit Answer</button>
+           </div>
+         </main>
+         <aside class="progress-panel">
+           <ul class="progress-list">
+             <li class="done"><span class="check">✓</span> Q1</li>
+             <li class="active"><span class="check">●</span> Q2</li>
+             <li><span class="check">○</span> Q3</li>
+             ...
+           </ul>
+         </aside>
+       </div>
+     </body>
+   --------------------------------------------------------------------------
+   Animations defined here:
+     @keyframes pulse     → soft breathing glow on .ai-avatar
+     @keyframes liveBlink → pulsing red shadow on .live-dot, .live-timer.ending
+                            and .big-mic.recording
+   Responsive: at <900px the 3 columns stack vertically.
+   ========================================================================== */
+.interview-page {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #F9FAFB;
+  font-family: 'Poppins', sans-serif;
+}
+
+.interview-layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* ----- Common panel title ----- */
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+}
+
+/* ----- LEFT: AI Interviewer panel ----- */
+.ai-panel {
+  width: 20%;
+  min-width: 220px;
+  background: white;
+  padding: 24px 20px;
+  border-right: 1px solid #E5E7EB;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  margin: 10px auto 12px;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15); }
+  50%      { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.30); }
+}
+
+.ai-tagline {
+  text-align: center;
+  font-size: 12px;
+  color: #6B7280;
+  margin-bottom: 26px;
+}
+
+.tips-block h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 10px;
+}
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tips-list li {
+  font-size: 12.5px;
+  color: #4B5563;
+  background: #F9FAFB;
+  border: 1px solid #F3F4F6;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+/* ----- CENTER: Main interview area ----- */
+.interview-main {
+  flex: 1;
+  padding: 28px 50px 36px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Top live bar */
+.live-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #F3F4F6;
+}
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #EF4444;
+  font-size: 13px;
+  font-weight: 500;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EF4444;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  animation: liveBlink 1.4s infinite;
+}
+@keyframes liveBlink {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.live-timer {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  font-variant-numeric: tabular-nums;
+  background: #F3F4F6;
+  padding: 5px 14px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+.live-timer.ending {
+  color: #EF4444;
+  background: #FEE2E2;
+  animation: liveBlink 1s infinite;
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.q-label {
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 500;
+}
+.q-tag {
+  background: #EEF2FF;
+  color: #6366F1;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.q-status {
+  font-size: 12px;
+  color: #22C55E;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.question-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.5;
+  letter-spacing: -0.2px;
+  margin-bottom: 24px;
+}
+
+.answer-input {
+  flex: 1;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  color: #111827;
+  resize: none;
+  outline: none;
+  transition: 0.2s;
+  min-height: 200px;
+  margin-bottom: 20px;
+}
+.answer-input:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.interview-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-mic {
+  border: 1px solid #E5E7EB;
+  background: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-mic:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+/* Active recording state */
+.btn-mic.recording {
+  background: #FEE2E2;
+  border-color: #EF4444;
+  color: #B91C1C;
+  animation: liveBlink 1.4s infinite;
+}
+
+/* ----- Answer mode tabs ----- */
+.answer-tabs {
+  display: flex;
+  gap: 8px;
+  background: #F3F4F6;
+  padding: 4px;
+  border-radius: 10px;
+  width: fit-content;
+  margin-bottom: 14px;
+}
+.answer-tabs .tab {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  color: #6B7280;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.answer-tabs .tab:hover { color: #111827; }
+.answer-tabs .tab.active {
+  background: white;
+  color: #6366F1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ----- Mode panels ----- */
+.answer-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  min-height: 0;
+}
+.answer-panel.hidden { display: none; }
+
+/* ----- Voice mode card ----- */
+.voice-card {
+  flex: 1;
+  background: #F9FAFB;
+  border: 1px dashed #E5E7EB;
+  border-radius: 12px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 220px;
+}
+
+.big-mic {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #6C63FF, #7A70FF);
+  color: white;
+  font-size: 36px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(108, 99, 255, 0.30);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.big-mic:hover { transform: translateY(-2px); }
+.big-mic.recording {
+  background: linear-gradient(135deg, #EF4444, #F87171);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.35);
+  animation: liveBlink 1.4s infinite;
+}
+
+.voice-status {
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 500;
+  margin: 0;
+}
+.voice-status.listening {
+  color: #EF4444;
+}
+
+.transcript-box {
+  width: 100%;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: #374151;
+  line-height: 1.5;
+  min-height: 60px;
+  max-height: 110px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.btn-submit {
+  background: linear-gradient(90deg, #6C63FF, #7A70FF);
+  color: white;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(108, 99, 255, 0.25);
+  transition: 0.25s;
+}
+.btn-submit:hover {
+  background: linear-gradient(90deg, #5A54E8, #6C63FF);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(108, 99, 255, 0.35);
+}
+
+/* ----- RIGHT: Progress tracker ----- */
+.progress-panel {
+  width: 20%;
+  min-width: 220px;
+  background: white;
+  padding: 24px 20px;
+  border-left: 1px solid #E5E7EB;
+}
+
+.progress-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.progress-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #6B7280;
+  padding: 9px 10px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+.progress-list .check {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #9CA3AF;
+}
+
+/* Done item */
+.progress-list li.done {
+  color: #4F46E5;
+  font-weight: 500;
+}
+.progress-list li.done .check {
+  color: #10B981;
+}
+
+/* Active item */
+.progress-list li.active {
+  background: #F5F6FF;
+  color: #111827;
+  font-weight: 600;
+}
+.progress-list li.active .check {
+  color: #6366F1;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 900px) {
+  .interview-page { height: auto; overflow: auto; }
+  .interview-layout { flex-direction: column; height: auto; }
+  .ai-panel,
+  .progress-panel { width: 100%; min-width: 0; border: none; border-bottom: 1px solid #E5E7EB; }
+  .interview-main { padding: 24px; }
+  .ai-avatar { width: 80px; height: 80px; font-size: 40px; }
+}
+
+/* ==========================================================================
+   SUBMITTING PAGE                                       (submitting.html)
+   --------------------------------------------------------------------------
+   Centered loading spinner shown between the interview and the result page
+   while the AI evaluates the answers.
+   HTML : <body class="submitting-page">
+            <div class="submit-wrapper">
+              <div class="spinner"></div>
+              <h2 class="submit-title">Evaluating your answers...</h2>
+              <p class="submit-subtitle">Hang tight, this takes a few seconds</p>
+            </div>
+          </body>
+   The .spinner is pure CSS: a circle with one purple border edge that
+   rotates forever via @keyframes spin.
+   ========================================================================== */
+.submitting-page {
+  margin: 0;
+  height: 100vh;
+  background: #F9FAFB;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-wrapper {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid #E5E7EB;
+  border-top-color: #6366F1;
+  border-radius: 50%;
+  margin: 0 auto 28px;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.submit-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+.submit-subtitle {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* ==========================================================================
+   RESULT PAGE — META PILLS                              (result.html)
+   --------------------------------------------------------------------------
+   Small colored pills showing relevance / confidence / fillers next to each
+   question on the result page.
+   HTML : <div class="meta-row">
+            <span class="meta-pill rel-high">High relevance</span>
+            <span class="meta-pill rel-medium">Medium relevance</span>
+            <span class="meta-pill rel-low">Low relevance</span>
+            <span class="meta-pill">3 fillers</span>
+          </div>
+   Color modifiers:
+     .rel-high   → green  (good)
+     .rel-medium → amber  (ok)
+     .rel-low    → red    (needs work)
+   Plain .meta-pill (no modifier) = neutral grey, used for filler counts etc.
+   ========================================================================== */
+.meta-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+.meta-pill.rel-high   { background: #ECFDF5; color: #059669; border-color: #A7F3D0; }
+.meta-pill.rel-medium { background: #FFFBEB; color: #B45309; border-color: #FDE68A; }
+.meta-pill.rel-low    { background: #FEF2F2; color: #B91C1C; border-color: #FCA5A5; }
+
