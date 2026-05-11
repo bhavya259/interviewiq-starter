@@ -1,98 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title><step2 select Experience</title>
+  <meta charset="UTF-8" />
+  <title>Step 2 - Experience | InterviewIQ AI</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="setup-panel-page">
-<div class="main-container">
 
-<!-- Top header + stepper + sectiontitle -->
-<div class="top-section">
-  <div class="panel-header">
-    <h1>Lets setup your interview</h1>
-    <p>Tell us about your preference</p>
-  </div>
-  <div class="step-bar">
-    <div class="step done">
-      <div class="step-circle">1</div>
-      <div class="step-label">Role</div>
+  <div class="main-container">
+
+    <!-- ===== TOP: Header + Stepper + Section title ===== -->
+    <div class="top-section">
+
+      <div class="panel-header">
+        <h1>Let's set up your interview</h1>
+        <p>Tell us about your preferences</p>
+      </div>
+
+      <div class="step-bar">
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Role</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step active">
+          <div class="step-circle">2</div>
+          <div class="step-label">Experience</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-circle">3</div>
+          <div class="step-label">Difficulty</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-circle">4</div>
+          <div class="step-label">Duration</div>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <h2>Select Your Experience Level</h2>
+        <p>This helps us personalize questions for you</p>
+      </div>
+
     </div>
-    <div class="step-line"></div>
-    <div class="step active">
-      <div class="step-circle">2</div>
-      <div class="step-label">Experience</div>
+
+    <!-- ===== MIDDLE: Experience cards (centered) ===== -->
+    <div class="experience-row">
+      <div class="experience-card" data-value="Fresher (0–1 years)">
+        <div class="exp-icon">🎓</div>
+        <div class="exp-title">Fresher</div>
+        <div class="exp-subtitle">0 - 1 year of experience</div>
+      </div>
+      <div class="experience-card" data-value="Experienced (1+ years)">
+        <div class="exp-icon">💼</div>
+        <div class="exp-title">Experienced</div>
+        <div class="exp-subtitle">1+ years of experience</div>
+      </div>
     </div>
-    <div class="step-line"></div>
-    <div class="step">
-      <div class="step-circle">3</div>
-      <div class="step-label">Difficulty</div>
+
+    <!-- ===== BOTTOM: Action buttons ===== -->
+    <div class="footer-actions">
+      <button class="btn-back" onclick="window.location.href='setup-role.html'">← Back</button>
+      <button class="btn-next" onclick="goNext()">Next →</button>
     </div>
-    <div class="step-line"></div>
-    <div class="step">
-      <div class="step-circle">4</div>
-      <div class="step-label">Duration</div>
-    </div>
+
   </div>
 
+  <script>
+    const STORAGE_KEY = "experience";
+    const NEXT_PAGE   = "difficulty.html";
 
-  <div class="section-heading">
-    <h2>Select Your Experience Level</h2>
-    <p>Choose the experience you want to practice</p>
-  </div>
-</div>
+    let selected = localStorage.getItem(STORAGE_KEY) || null;
 
+    document.querySelectorAll(".experience-card").forEach(card => {
+      if (card.dataset.value === selected) card.classList.add("selected");
 
-<!-- Middle Role grid -->
-<div class="experience-row">
-  <div class="experience-card" data-value="Fresher (0-1 year)">
-    <div class ="exp-icon">💻</div>
-    <div class="exp-title">Fresher</div>
-    <div class="exp-subtitle">0 - 1 Year of experience</div>
-  </div>
-  <div class="experience-card" data-value="Experienced (0-1 year)">
-    <div class ="exp-icon">💻</div>
-    <div class="exp-title">Experienced</div>
-    <div class="exp-subtitle"> 1+ Year of experience</div>
-  </div>
-</div>
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".experience-card").forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selected = card.dataset.value;
+        localStorage.setItem(STORAGE_KEY, selected);
+      });
+    });
 
-<div class="footer-actions">
-  <button class="btn-back" onclick="window.location.href='setup-role.html'"><- Back</button>
-  <button class="btn-back" onclick="goNext()">Next -></button>
-</div>
-</div>
-
-<script>
-  const STORAGE_KEY = "experience";
-  const NEXT_PAGE = "difficulty.html"
-
-  let selected = localStorage.getItem(STORAGE_KEY) || null;
-
-  document.querySelectorAll(".experience-card").forEach(card => {
-    if(card.dataset.value == selected) card.classList.add("selected");
-
-    card.addEventListener("click", () =>{
-      document.querySelectorAll(".experience-card").forEach(c=> c.classList.remove("selected"));
-      card.classList.add("selected");
-      selected = card.dataset.value;
-      localStorage.setItem(STORAGE_KEY,selected);
-    })
-  })
-
-  function goNext(){
-    if(!selected){
-      alert("Please select a experience level to continue");
-      return;
+    function goNext() {
+      if (!selected) {
+        alert("Please select your experience level.");
+        return;
+      }
+      window.location.href = NEXT_PAGE;
     }
-    window.location.href = NEXT_PAGE;
-  }
-
-</script>
-
-
+  </script>
 
 </body>
 </html>
+

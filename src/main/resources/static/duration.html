@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Step 4 - Duration | InterviewIQ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="setup-panel-page">
+
+  <div class="main-container">
+
+    <!-- ===== TOP: Header + Stepper + Section title ===== -->
+    <div class="top-section">
+
+      <div class="panel-header">
+        <h1>Let's set up your interview</h1>
+        <p>Tell us about your preferences</p>
+      </div>
+
+      <div class="step-bar">
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Role</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Experience</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Difficulty</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step active">
+          <div class="step-circle">4</div>
+          <div class="step-label">Duration</div>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <h2>Select Interview Duration</h2>
+        <p>You can end the interview anytime</p>
+      </div>
+
+    </div>
+
+    <!-- ===== MIDDLE: Duration cards (centered) ===== -->
+    <div class="duration-row">
+      <div class="duration-card" data-value="10 Minutes">
+        <div class="dur-icon">⏱</div>
+        <div class="dur-title">10 Minutes</div>
+        <div class="dur-subtitle">Quick Practice</div>
+      </div>
+
+      <div class="duration-card recommended" data-value="20 Minutes">
+        <span class="recommended-badge">Recommended</span>
+        <div class="dur-icon">⏱</div>
+        <div class="dur-title">20 Minutes</div>
+        <div class="dur-subtitle">Recommended</div>
+      </div>
+
+      <div class="duration-card" data-value="30 Minutes">
+        <div class="dur-icon">⏱</div>
+        <div class="dur-title">30 Minutes</div>
+        <div class="dur-subtitle">Full Practice</div>
+      </div>
+    </div>
+
+    <!-- ===== BOTTOM: Action buttons ===== -->
+    <div class="footer-actions">
+      <button class="btn-back" onclick="window.location.href='difficulty.html'">← Back</button>
+      <button class="btn-next" onclick="startInterview()">Start Interview →</button>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = "duration";
+
+    let selected = localStorage.getItem(STORAGE_KEY) || null;
+
+    document.querySelectorAll(".duration-card").forEach(card => {
+      if (card.dataset.value === selected) card.classList.add("selected");
+
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".duration-card").forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selected = card.dataset.value;
+        localStorage.setItem(STORAGE_KEY, selected);
+      });
+    });
+
+    function startInterview() {
+      if (!selected) {
+        alert("Please select an interview duration.");
+        return;
+      }
+
+      // Map textual duration ("10 Minutes") -> integer minutes
+      const durationMinutes = parseInt(localStorage.getItem("duration"), 10) || 10;
+
+      const setup = {
+        role:            localStorage.getItem("role"),
+        experienceLevel: localStorage.getItem("experience"),
+        difficulty:      localStorage.getItem("difficulty"),
+        duration:        durationMinutes
+      };
+
+      console.log("[duration] creating interview", setup);
+
+      // Disable button while we hit the backend
+      const btn = document.querySelector(".btn-next");
+      if (btn) { btn.disabled = true; btn.textContent = "Starting..."; }
+
+      fetch("/interview/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(setup)
+      })
+      .then(r => r.ok ? r.json() : Promise.reject("HTTP " + r.status))
+      .then(resp => {
+        // Save id so submitting.html can link answers + evaluation back
+        localStorage.setItem("interviewId", resp.interviewId);
+        console.log("[duration] interview saved, id =", resp.interviewId);
+        window.location.href = "live-interview.html";
+      })
+      .catch(err => {
+        console.error("[duration] could not create interview:", err);
+        // Don't block the user — let the interview proceed without DB persistence
+        localStorage.removeItem("interviewId");
+        window.location.href = "live-interview.html";
+      });
+    }
+  </script>
+
+</body>
+</html>
+
