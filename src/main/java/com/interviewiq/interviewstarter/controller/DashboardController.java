@@ -21,11 +21,11 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
-    /** Original simple endpoint — kept for backward compatibility. */
-    @GetMapping("/dashboard")
-    public DashboardResponse getDashboardStats() {
-        return dashboardService.getStats();
-    }
+//    /** Original simple endpoint — kept for backward compatibility. */
+//    @GetMapping("/dashboard")
+//    public DashboardResponse getDashboardStats() {
+//        return dashboardService.getStats();
+//    }
 
     /** Full dashboard payload consumed by dashboard.html. */
     @GetMapping("/api/dashboard")
