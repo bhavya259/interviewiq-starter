@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+   submitting.html
+   ----------------------------------------------------------
+   This page is shown for a few seconds AFTER the user clicks
+   "Submit" on the live-interview page. While the user watches
+   a friendly spinner + checklist animation, we secretly:
+
+     1. Send all their answers to the backend for AI evaluation.
+     2. Mark the Interview row as "finished" with the final score.
+     3. Save the result into localStorage.
+     4. Redirect to result.html where the score is displayed.
+
+   The user never sees steps 1–3 happening — they only see the
+   loading animation. That's intentional: good UX hides waiting.
+  ============================================================
+-->
+<html lang="en">
+<!--    ^^^^^^^^^^
+        lang="en" tells the browser this page is in English.
+        Helps screen readers + search engines.
+-->
+<head>
+  <!-- UTF-8 = supports emojis (✔ ⬜ ⏳) and any language characters. -->
+  <meta charset="UTF-8" />
+
+  <!-- Text in the browser tab while this page is open. -->
+  <title>Evaluating... | InterviewIQ AI</title>
+
+  <!-- Shared stylesheet for the whole app (spinner + eval-card classes live there). -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Pull the Poppins font from Google so the page looks polished. -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<!--
+  The class "submitting-page" lets style.css apply rules ONLY to this page
+  (e.g. centering the eval-card vertically with flexbox).
+-->
+<body class="submitting-page">
+
+  <!-- ===== The white card in the middle of the screen ===== -->
+  <div class="eval-card">
+
+    <!-- A spinning circle — pure CSS animation, defined in style.css. -->
+    <div class="spinner"></div>
+
+    <!-- Big title at the top of the card. -->
+    <h1 class="submit-title">Evaluation in Progress...</h1>
+
+    <!--
+      Subtitle text. We give it id="statusText" so JavaScript can
+      change this message later (e.g. show an error message if the
+      backend call fails).
+    -->
+    <p class="submit-subtitle" id="statusText">Please wait while we analyze your answers</p>
+
+    <!--
+      Checklist of evaluation steps.
+      Each <li> starts with ⬜ (not done). JS will flip them to:
+        ⏳  = currently in progress
+        ✔   = done
+    -->
+    <ul class="eval-steps" id="evalSteps">
+      <li><span class="step-icon">⬜</span> Analyzing Content</li>
+      <li><span class="step-icon">⬜</span> Checking Technical Accuracy</li>
+      <li><span class="step-icon">⬜</span> Evaluating Clarity</li>
+      <li><span class="step-icon">⬜</span> Measuring Confidence</li>
+    </ul>
+  </div>
+
+  <script>
+    /* ============================================================
+     *  PART 1 — Visual progress (FAKE)
+     *  ----------------------------------------------------------
+     *  This animation is purely cosmetic. It has NOTHING to do
+     *  with the real backend call. It exists because:
+     *    - Even fast APIs feel slow if there's no visible progress.
+     *    - Users feel reassured when they see "something is happening".
+     * ============================================================ */
+
+    // Grab ALL <li> children inside #evalSteps.
+    // querySelectorAll returns a NodeList (an array-like list we can loop).
+    const steps = document.querySelectorAll("#evalSteps li");
+
+    // Mark the FIRST step as "active" immediately (before the loop runs)
+    // so the user sees something happening right away.
+    steps[0].classList.add("active");
+    steps[0].querySelector(".step-icon").textContent = "⏳";
+
+    // Loop through every step. `step` = the <li>, `i` = its index (0, 1, 2, 3).
+    steps.forEach((step, i) => {
+
+      // setTimeout schedules the inner code to run AFTER a delay (in milliseconds).
+      // (i + 1) * 800  →  step 0: 800ms, step 1: 1600ms, step 2: 2400ms, step 3: 3200ms
+      // So each step "completes" 800ms after the previous one — like a domino chain.
+      setTimeout(() => {
+
+        // Mark THIS step as completed (remove "active", add "done").
+        step.classList.remove("active");
+        step.classList.add("done");
+        step.querySelector(".step-icon").textContent = "✔";
+
+        // Move on to the NEXT step (if there is one) and mark it as active.
+        const next = steps[i + 1];
+        if (next) {
+          next.classList.add("active");
+          next.querySelector(".step-icon").textContent = "⏳";
+        }
+      }, (i + 1) * 800);
+    });
+
+    /* ============================================================
+     *  PART 2 — Real backend call (the actual evaluation)
+     *  ----------------------------------------------------------
+     *  This is wrapped in an IIFE: (async function() { ... })();
+     *
+     *  IIFE = Immediately Invoked Function Expression.
+     *  It means: "Define an async function AND run it right away."
+     *
+     *  Why? We want this code to start the moment the page loads,
+     *  without giving the function a name and calling it separately.
+     * ============================================================ */
+    (async function evaluate() {
+
+      /* ---- Pull data that the previous page saved for us ---- */
+
+      // localStorage.getItem returns either the saved string OR null.
+      // "|| '[]'"  = if null, use an empty array string so JSON.parse won't crash.
+      const answers = JSON.parse(localStorage.getItem("answers") || "[]");
+
+      // The interview ID was saved earlier (when "Start Interview" was clicked).
+      const interviewId = localStorage.getItem("interviewId");
+
+      /* ---- Safety check: no answers? Show a friendly message and stop. ---- */
+      if (!answers.length) {
+        document.getElementById("statusText").textContent =
+          "No answers found. Please complete an interview first.";
+        return;   // Stop here — don't even try to call the API.
+      }
+
+      /* ---- try/catch wraps the entire network flow ---- */
+      // If ANY fetch inside fails, control jumps to the catch block at the bottom.
+      try {
+
+        /* ============================================================
+         *  STEP 1: Send all answers to the backend for AI evaluation.
+         *          The backend will:
+         *            - score each answer
+         *            - save Answer rows in the DB
+         *            - save Evaluation rows in the DB
+         *            - return an overall result JSON
+         * ============================================================ */
+
+        // `await` pauses this function until the fetch finishes.
+        // It makes async code LOOK like normal step-by-step code.
+        const res = await fetch("/evaluate-answer", {
+          method: "POST",                                    // POST = create/submit data
+          headers: { "Content-Type": "application/json" },   // tell Spring "I'm sending JSON"
+          body: JSON.stringify({
+            // .map() transforms each answer object into the EXACT shape the backend expects.
+            // (Frontend names ≠ backend field names — we rename them here.)
+            answers: answers.map(a => ({
+              questionId:   a.questionId,
+              questionText: a.question,
+              answerText:   a.answer
+            }))
+          })
+        });
+
+        // res.ok is TRUE for HTTP 200–299, FALSE for 400 / 500 etc.
+        // If something went wrong on the server, throw → jumps to catch().
+        if (!res.ok) {
+          throw new Error("Server returned " + res.status);
+        }
+
+        // Parse the JSON body the server sent back into a real JavaScript object.
+        const data = await res.json();
+
+        /* ============================================================
+         *  STEP 2: Tell backend "this interview is finished".
+         *          Stamps the finalScore on the Interview row in MySQL.
+         *          Wrapped in its own try/catch so a failure here does
+         *          NOT prevent the user from seeing their result.
+         * ============================================================ */
+        if (interviewId) {
+          try {
+            await fetch("/interview/" + interviewId + "/finish", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ finalScore: data.score })
+            });
+            console.log("[submitting] interview", interviewId, "marked finished, score =", data.score);
+          } catch (e) {
+            // Non-fatal — we still want to show the result.
+            console.warn("[submitting] could not finish interview:", e);
+          }
+        } else {
+          // No interviewId in localStorage — log a warning for developers.
+          console.warn("[submitting] no interviewId in localStorage — Interview row won't be linked");
+        }
+
+        /* ============================================================
+         *  STEP 3: Hand off the result to result.html.
+         *          We CAN'T pass JS objects between HTML pages directly
+         *          — only strings. So we stringify the result and save
+         *          it in localStorage. result.html will read it back.
+         * ============================================================ */
+        const result = {
+          score:         data.score,
+          strengths:     data.strengths       || [],   // "|| []" = default to empty array
+          weaknesses:    data.weaknesses      || [],
+          suggestions:   data.recommendations || [],
+          fillerWords:   data.fillerWords,
+          confidence:    data.confidence,
+          relevance:     data.relevance,
+          answeredCount: answers.length
+        };
+
+        // Save the JSON string in localStorage under the key "result".
+        localStorage.setItem("result", JSON.stringify(result));
+
+        // Wait 2.8 seconds so the visual checklist (Part 1) has time to finish,
+        // THEN redirect to the result page.
+        setTimeout(() => { window.location.href = "result.html"; }, 2800);
+
+      } catch (err) {
+        /* ============================================================
+         *  Something went wrong somewhere in the try block.
+         *  We log the technical error for developers (console)
+         *  and show a friendly message to the user.
+         * ============================================================ */
+        console.error("Evaluation failed:", err);
+        document.getElementById("statusText").textContent =
+          "⚠️ Could not reach the evaluation server. Check the console for details.";
+
+        // IMPORTANT: We do NOT redirect on error.
+        // Better to keep the user here than send them to a broken result page.
+      }
+    })();   // ← The "()" at the end is what makes the function run immediately.
+  </script>
+
+</body>
+</html>

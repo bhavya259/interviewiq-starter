@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - InterviewIQ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+
+<div class="dash-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">InterviewIQ <span>AI</span></div>
+    <nav class="sidebar-menu">
+      <a href="dashboard.html"       class="menu-item active">📊 Dashboard</a>
+      <a href="my-interviews.html"   class="menu-item">🎤 My Interviews</a>
+      <a href="analytics.html"       class="menu-item">📈 Analytics</a>
+      <a href="recommendations.html" class="menu-item">💡 Recommendations</a>
+      <a href="profile.html"         class="menu-item">👤 Profile</a>
+      <a href="settings.html"        class="menu-item">⚙️ Settings</a>
+      <a href="login.html"           class="menu-item logout">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+    <header class="dash-header">
+      <div class="header-text">
+        <h1>Dashboard</h1>
+        <p class="dash-subtitle">Welcome back, continue your interview journey</p>
+      </div>
+      <button class="btn-start" onclick="location.href='setup-role.html'">Start Interview</button>
+    </header>
+
+    <div class="dashboard-content">
+
+      <div id="loadingState" class="state-box">
+        <div class="spinner"></div>
+        <p>Loading your dashboard...</p>
+      </div>
+
+      <div id="errorState" class="state-box hidden">
+        <div class="state-icon">⚠️</div>
+        <h3>Couldn't load dashboard</h3>
+        <p id="errorMsg">Please check your connection and try again.</p>
+        <button class="btn-start" onclick="load()">Retry</button>
+      </div>
+
+      <div id="dashboardData" class="hidden">
+
+        <section class="stats-row">
+          <div class="stat-card"><div class="stat-icon purple">🎤</div><div class="stat-text"><div class="label">Total Interviews</div><div class="value" id="statTotal">--</div></div></div>
+          <div class="stat-card"><div class="stat-icon green">📊</div><div class="stat-text"><div class="label">Average Score</div><div class="value" id="statAvg">--</div></div></div>
+          <div class="stat-card"><div class="stat-icon amber">🏆</div><div class="stat-text"><div class="label">Best Score</div><div class="value" id="statBest">--</div></div></div>
+          <div class="stat-card"><div class="stat-icon blue">⏱</div><div class="stat-text"><div class="label">Total Practice Time</div><div class="value" id="statTime">--</div></div></div>
+        </section>
+
+        <section class="charts-row">
+          <div class="panel">
+            <h3>📈 Score Trend (Last 7 Days)</h3>
+            <div class="line-chart-wrap" id="lineChart"></div>
+          </div>
+          <div class="panel">
+            <h3>🎯 Weak Areas</h3>
+            <div class="donut-row">
+              <svg id="donutChart" viewBox="0 0 42 42" aria-hidden="true"></svg>
+              <ul class="legend" id="donutLegend"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-row">
+          <div class="panel">
+            <h3>🕒 Recent Interviews</h3>
+            <div class="table-wrap">
+              <table class="recent-table">
+                <thead><tr><th>Role</th><th>Level</th><th>Date</th><th>Score</th><th>Status</th></tr></thead>
+                <tbody id="recentTbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>💪 Top Strengths</h3>
+            <div class="strength-list" id="strengthList"></div>
+          </div>
+        </section>
+
+      </div><!-- /#dashboardData -->
+    </div><!-- /.dashboard-content -->
+  </main>
+</div>
+
+<script src="dashboard.js"></script>
+
+</body>
+</html>
+
