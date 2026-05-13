@@ -23,7 +23,7 @@ public class Interview {
     private String difficulty;
     private Integer duration;
 
-    private String finalscore;
+    private Integer finalScore;
     private LocalDateTime completedAt;
 
 }
