@@ -443,24 +443,9 @@
 
 
     // ──────────────────────────────────────────────────────────────
-    // STEP 2 — Branch: empty state OR render
-    // ──────────────────────────────────────────────────────────────
-    if (!r) {
-      // No result in localStorage → user probably opened this page
-      // directly without doing an interview. Replace the WHOLE shell
-      // with a single "empty" card. Backticks (`...`) let us write
-      // multi-line HTML without messy + concatenation.
-      document.getElementById("shell").innerHTML = `
-        <div class="card empty">
-          <h2>No result found</h2>
-          <p>Please complete an interview first.</p>
-          <a href="dashboard.html" class="btn btn-primary">Back to Dashboard</a>
-        </div>`;
-    } else render(r);   // We have data — paint the page.
-
-
-    // ──────────────────────────────────────────────────────────────
     // Tiny reusable helpers (defined once, used many times below)
+    // NOTE: declared BEFORE we call render(), otherwise we hit a
+    //       "Cannot access 'tone' before initialization" TDZ error.
     // ──────────────────────────────────────────────────────────────
 
     /* esc()  — make user/AI text safe to inject with innerHTML.
@@ -479,6 +464,23 @@
          value < 40   →  "low"   (red)
        NOTE: order matters in chained ternaries — highest first. */
     const tone = v => v >= 70 ? "good" : v >= 40 ? "mid" : "low";
+
+
+    // ──────────────────────────────────────────────────────────────
+    // STEP 2 — Branch: empty state OR render
+    // ──────────────────────────────────────────────────────────────
+    if (!r) {
+      // No result in localStorage → user probably opened this page
+      // directly without doing an interview. Replace the WHOLE shell
+      // with a single "empty" card. Backticks (`...`) let us write
+      // multi-line HTML without messy + concatenation.
+      document.getElementById("shell").innerHTML = `
+        <div class="card empty">
+          <h2>No result found</h2>
+          <p>Please complete an interview first.</p>
+          <a href="dashboard.html" class="btn btn-primary">Back to Dashboard</a>
+        </div>`;
+    } else render(r);   // We have data — paint the page.
 
 
     // ──────────────────────────────────────────────────────────────
