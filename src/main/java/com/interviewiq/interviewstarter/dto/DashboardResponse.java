@@ -20,14 +20,14 @@ public class DashboardResponse{
 
     private List<TrendPoint> scoreTrend;
     private List<NamedValue> weakAreas;
-    private List<RecentInterviews> recentinterviews;
+    private List<RecentInterviews> recentInterviews;
     private List<NamedValue>     strengths;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class TrendPoint{
-        private String data;
+        private String date;
         private int score;
     }
 

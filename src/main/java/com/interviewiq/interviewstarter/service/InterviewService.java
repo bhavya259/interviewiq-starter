@@ -4,6 +4,8 @@ import com.interviewiq.interviewstarter.entity.Interview;
 import com.interviewiq.interviewstarter.repository.InterviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class InterviewService {
 
@@ -19,6 +21,14 @@ public class InterviewService {
         interview.setExperienceLevel(experienceLevel);
         interview.setDifficulty(difficulty);
         interview.setDuration(duration);
+        return interviewRepository.save(interview);
+    }
+
+    public Interview finish(Long id, Integer finalScore){
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Interview not found: " + id));
+        interview.setFinalScore(finalScore);
+        interview.setCompletedAt(LocalDateTime.now());
         return interviewRepository.save(interview);
     }
 }

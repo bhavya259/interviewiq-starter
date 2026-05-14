@@ -23,4 +23,11 @@ public class InterviewDtos {
         private String message;
         private Long interviewId;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FinishInterviewRequest {
+        private Integer finalScore;
+    }
 }

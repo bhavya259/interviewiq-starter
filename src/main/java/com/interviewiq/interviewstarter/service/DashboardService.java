@@ -47,7 +47,7 @@ public class DashboardService {
                 .bestScore(best)
                 .scoreTrend(buildingTrend(finished))
                 .weakAreas(buildWeakAreas(finished))
-                .recentinterviews(buildRecent(finished))
+                .recentInterviews(buildRecent(finished))
                 .strengths(buildStrengths(average))
                 .build();
     }
@@ -157,7 +157,7 @@ public class DashboardService {
                         new DashboardResponse.NamedValue("System Design", 25),
                         new DashboardResponse.NamedValue("API", 20),
                         new DashboardResponse.NamedValue("Others", 15)))
-                .recentinterviews(List.of(
+                .recentInterviews(List.of(
                         demoRow("Backend Developer",  "Medium", today.minusDays(2),  85, "Completed"),
                         demoRow("Frontend Developer", "Easy",   today.minusDays(4),  78, "Completed"),
                         demoRow("Java Developer",     "Hard",   today.minusDays(7),  62, "Needs Review"),
